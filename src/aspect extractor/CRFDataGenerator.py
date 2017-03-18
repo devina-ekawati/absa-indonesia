@@ -13,13 +13,13 @@ class CRFDataGenerator:
 		self.CONLL_table = CONLLTable("../../data/output1.conll")
 
 	def init_dependency_tags(self):
-		bag_of_bvot = {}
-		with open("../../data/dependecy_tags.txt", "r") as f:
+		bag_of_vbot = {}
+		with open("../../data/dependency_tags.txt", "r") as f:
 			for line in f:
 				line = line.rstrip()
 				tokens = line.split()
-				bag_of_bvot[tokens[0]] = 0
-		self.bag_of_bvot = bag_of_bvot
+				bag_of_vbot[tokens[0]] = 0
+		return bag_of_vbot
 
 	def get_list_unigrams(self):
 		return self.list_unigrams
@@ -66,6 +66,12 @@ class CRFDataGenerator:
 		bag_of_vbot = self.init_dependency_tags()
 		row = self.CONLL_table.get_row(id_sentence, id_word)
 		line = self.CONLL_table.get_word(row) + " " + self.CONLL_table.get_pos_tag(row)
+
+		label = self.CONLL_table.get_label(row)
+		if (label == "ASPECT-B" or label == "ASPECT-I"):
+			line += " yes"
+		else:
+			line += " no"
 		
 		window_text = self.get_window_text(5, self.CONLL_table.get_sentence(id_sentence).split(), id_word)
 		window_unigrams = Counter(ngrams(nltk.word_tokenize(window_text), 1))
@@ -100,21 +106,21 @@ class CRFDataGenerator:
 			else:
 				line += " 0"
 
-		filter = ["VERB"]
-		words = self.CONLL_table.filter_words_by_pos_tag(id_sentence, filter)
-		for key1 in words:
-			children = self.CONLL_table.get_children(key1, id_sentence)
-			for key2, value2 in children.iteritems():
-				bag_of_bvot[self.CONLL_table.get_tree_tag(value2)] += 1
+		# filter = ["VERB"]
+		# words = self.CONLL_table.filter_words_by_pos_tag(id_sentence, filter)
+		# for key1 in words:
+		# 	children = self.CONLL_table.get_children(key1, id_sentence)
+		# 	for key2, value2 in children.iteritems():
+		# 		bag_of_vbot[self.CONLL_table.get_tree_tag(value2)] += 1
 
-			siblings = self.CONLL_table.get_siblings(key1, id_sentence)
-			for key2, value2 in siblings.iteritems():
-				bag_of_bvot[self.CONLL_table.get_tree_tag(value2)] += 1
+		# 	siblings = self.CONLL_table.get_siblings(key1, id_sentence)
+		# 	for key2, value2 in siblings.iteritems():
+		# 		bag_of_vbot[self.CONLL_table.get_tree_tag(value2)] += 1
 
-		for key, value in bag_of_bvot.iteritems():
-			line += " " + str(value)
+		# for key, value in bag_of_vbot.iteritems():
+		# 	line += " " + str(value)
 
-		return line + " " + self.CONLL_table.get_label(row) + "\n"
+		return line + " " + label + "\n"
 
 	def generate_data(self, filename):
 		reviews = self.CONLL_table.get_sentences()

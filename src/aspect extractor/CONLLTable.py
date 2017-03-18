@@ -130,7 +130,6 @@ class CONLLTable :
 	def get_siblings(self, id_sibling, id_sentence, tag_filter=None, start=0, end=None, remove_punctuation=True):
 		siblings = {}
 		id_parent = self.get_parent(self.tables[id_sentence][id_sibling])
-		print self.tables[id_sentence][id_sibling]
 
 		siblings = self.get_children(id_parent, id_sentence, tag_filter=None, start=0, end=None, remove_punctuation=True)
 		siblings.pop(id_sibling)
@@ -192,7 +191,7 @@ class CONLLTable :
 					for line_word in line_sentence:
 						tokens = line_word.split("\t")
 
-						CONLL_sentence[int(tokens[0])] = (tokens[1], tokens[3], int(tokens[6]), tokens[7], tokens[10])
+						CONLL_sentence[int(tokens[0])] = (tokens[1], tokens[3].lower(), int(tokens[6]), tokens[7], tokens[10])
 
 					tables.append(collections.OrderedDict(sorted(CONLL_sentence.items())))
 					line_sentence = []
