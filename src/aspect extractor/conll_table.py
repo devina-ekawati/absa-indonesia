@@ -79,10 +79,13 @@ class CONLLTable :
 						sentence += value[self.id_word] + " "
 		return sentence[:-1]
 
-	def get_sentences(self, remove_punctuation=True, remove_stopword=False):
+	def get_sentences(self, remove_punctuation=True, remove_stopword=False, start=0, end=None):
+		if (end == None):
+			end = len(self.tables)
+
 		sentences = []
 		tables = self.tables
-		for i in range(len(tables)):
+		for i in range(start, end):
 			sentences.append(self.get_sentence(i, remove_punctuation, remove_stopword))
 
 		return sentences
@@ -173,7 +176,7 @@ class CONLLTable :
 
 	def read_stopword_list(self):
 		stopword = []
-		with open("../resource/stopword.txt", "r") as f:
+		with open("../preprocess/resource/stopword.txt", "r") as f:
 			for line in f:
 				stopword.append(line.rstrip())
 		self.stopword = stopword
@@ -205,12 +208,12 @@ if __name__ == "__main__":
 
 	# print tables[0]
 
-	print CONLL_table.get_children(2, 0)
+	# print CONLL_table.get_children(2, 0)
 	# print CONLL_table.get_siblings(8, 0)
 
 	# print CONLL_table.get_sentence(0)
 
-	# print CONLL_table.get_sentences()
+	print CONLL_table.get_sentences()
 
 	# filter = ["NOUN", "ADJ", "ADV", "VERB"]
 	# print CONLL_table.filter_words_by_pos_tag(0, filter)
