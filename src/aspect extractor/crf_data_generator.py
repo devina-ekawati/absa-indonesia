@@ -63,7 +63,7 @@ class CRFDataGenerator:
 		return result
 
 	def get_feature(self, id_sentence, id_word):
-		bag_of_vbot = self.init_dependency_tags()
+		# bag_of_vbot = self.init_dependency_tags()
 		row = self.CONLL_table.get_row(id_sentence, id_word)
 		line = self.CONLL_table.get_word(row) + " " + self.CONLL_table.get_pos_tag(row)
 
@@ -122,8 +122,8 @@ class CRFDataGenerator:
 
 		return line + " " + label + "\n"
 
-	def generate_data(self, filename):
-		reviews = self.CONLL_table.get_sentences()
+	def generate_data(self, filename, start=0, end=None):
+		reviews = self.CONLL_table.get_sentences(start, end)
 
 		filter = ["NOUN", "ADJ", "ADV", "VERB"]
 		unigrams = Counter(ngrams(nltk.word_tokenize(" ".join(self.CONLL_table.get_filtered_sentences(filter))), 1))

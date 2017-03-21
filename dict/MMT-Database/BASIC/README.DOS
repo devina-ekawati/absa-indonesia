@@ -1,0 +1,134 @@
+This CD-ROM includes 9 data files:
+(1)uxix files(all ascii code)
+   a. MASTER  - Indonesian basic word data
+   b. IDIOM   - Indonesian Idiom data
+   c. OTHER   - other words data
+   d. AKRONIM - Indonesian Akronim data
+(2)ms-dos data(all ascii code)(use \r|n for \n)
+   a. MASTER.dos  - Indonesian basic word data
+   b. IDIOM.dos   - Indonesian Idiom data
+   c. OTHER.dos   - other words data
+   d. AKRONIM.dos - Indonesian Akronim data
+(3)ATRFILE   - list of used grammatical attribute
+
+File format and code
+
+1. Indonesian bacic word dictionary file code
+  Ascii code
+
+2. Indonesian basic word dictionary data
+  about 50,000 words
+
+3. Indonesian basic word dictionary data format(see Indonesia Basic word dictionrary technical report of CICC)
+
+Each file has same format as follows:
+
+(1)%1  Headword 
+Headword entry contains an Indonesian morpheme or word including idiom that become a base of word formation. 
+  (ex)  %1abadi  
+
+(2)%2  Word Number
+Word number entry is a number which is unique for each headword. The number is assigned sequentially according the  entry input time. 
+  (ex)  %212087
+
+(3)%3  Variation
+Variation entry is used to registered the variation of headword writting. 
+  (ex)  %3akuta
+
+(4)%4  Headconcept
+Headconcept is the upper concept that represents the meaning of its corresponding headword. It is described in English. Two or more English equivalent word can be  written to represent the headconcept. Each English description is separated using semicolon delimiter.
+  (ex)  %4eternal;unending
+
+(5)%5  Concept Number
+Not supported
+
+(6)@lm10  Part of Speech
+Part of speech contains the syntactic category of the derivation word. 
+The meaning of the first code "l" after the at mark character is  as follows:
+ 1 indicate the noun part of speech
+ 2 indicate the verb part of speech
+ 3 indicate the adjective part of speech
+ 4 indicate the others part of speech
+Second code "m" is use to indicate the corresponding derivation number. For example 3 means that the corresponding record is the third derivation word of the corresponding part of speech.
+  (ex)  @2310IVIO
+
+(7)&lm11  Correspondence Word
+Corresponding word entry contains the derivation word. 
+  (ex)  &2111mengabadikan
+
+(8)&lm12  Active Conjugation Code
+Active conjugation code is applied only for verb derivative word. 
+  (ex)  &2112135
+
+(9)&lm13 Passive Conjugation Code
+This code is applied only for transitive  verb derivation word. It was  inputted with counterpart passive code of the corresponding derivation word. 
+  (ex)  &2113630
+
+(10)&lm14 Other conjugation Code
+This code is applied for non verb derivation words. 
+  (ex)  &1114310
+
+(11)&lm15 Reduplication Code
+This code mainly indicates a reduplicated or unreduplicated noun and how the reduplicated derivation word is formed.
+  (ex)  &1115INRD1
+
+(12)#lmn0  Concept Description
+Concept description contains corresponding equivalent English word or sentence that represent the meaning of derivation word. For two or more equivalent word, it was separated using semicolon character.
+Third code "n" after sharp character is use to indicate the corresponding meaning number. For example 2 means that the corresponding record is the third meaning of the corresponding derivation word. 
+  (ex)  #1100eternity;durability
+
+(13)#lmn1  Semantic Feature
+Semantic feature contains the semantic classification of  corresponding meaning of derivation word. 
+  (ex)  #1101INCAST
+
+(14)#lmn2 Grammar Rule Number (P)
+Current master dictionary has not  supported with this information.
+
+(15)#lmn3 Grammar Rule Number (A)
+Current master dictionary has not supported with this information.
+
+(16)#n..4 Concept Number
+Not supported
+
+Example of Indonesian dictionary data is shon bellow.
+
+
+==> MASTER <==
+%1abad
+%200001
+%4century
+@1110INCC
+&1111abad
+&1114000
+&1115INRD1
+#1100century (a period of a hundred years)
+#1101INCATM
+@4110IADVM
+&4111berabad-abad
+&4114202
+&4115INRD1
+#4100for centuries
+#4101IADTM
+
+%1abadi
+%200002
+%4eternal; unending
+@1110INCA
+&1111keabadian
+&1114510
+&1115INNR
+#1100eternity; permanence; durability; immortality
+#1101INCAST
+@1210INCA
+&1211pengabadian
+&1214815
+&1215INNR
+#1200preserving; keeping alive; immortalizing
+#1201INCAAC
+#1210perpetuation
+#1211INCAAC
+#1220capturing something (on canvas, etc.)
+#1221INCAAC
+#1230taking a picture of or photographing
+#1231INCAAC
+

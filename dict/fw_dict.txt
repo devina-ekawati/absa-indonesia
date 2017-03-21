@@ -1,0 +1,92 @@
+all u can eat	makan sepuasnya
+all you can eat	makan sepuasnya
+and	dan
+ambience	suasana
+ambiencenya	suasananya
+awesome	mengagumkan
+beverage	minuman
+beveragenya	minumannya
+breakfast	sarapan
+breakfast-nya	sarapannya
+breakfastnya	sarapannya
+but	tapi
+cake	kue
+cakenya	kuenya
+cheap	murah
+coffee shop	kedai kopi
+coffee	kopi
+cool	keren
+couple	pasangan
+cozy	nyaman
+decor	dekorasi
+decor-nya	dekorasinya
+decornya	dekorasinya
+decoration	dekorasi
+decorationnya	dekorasinya
+design interior	interior desain
+design	desain
+designnya	desainnya
+dessert	makanan penutup
+dessert-nya	makanan penutupnya
+dessertnya	makanan penutupnya
+delicious	enak
+dinner	makan malam
+dinnernya	makan malamnya
+elegant	anggun
+expensive	mahal
+extraordinary	luar biasa
+fair	adil
+favourite food	makanan kesukaan
+favourite	kesukaan
+favorite	kesukaan
+free	gratis
+fresh	segar
+food	makanan
+friendly	ramah
+full	penuh
+good	bagus
+good job	kerja bagus
+i	saya
+juice	jus
+juicy	enak
+love	suka
+non smoking	tidak merokok
+not	tidak
+or	atau
+overall	secara keseluruhan
+portion	porsi
+recommended	disarankan
+reasonable	pantas
+relative	relatif
+relax	bersantai
+restaurant	restoran
+romantic	romantis
+service	pelayanan
+servicenya	pelayanannya
+so so	biasa saja
+special	spesial
+specialty	khusus
+small	kecil
+smoking area	area merokok
+standard	standar
+staf	pelayan
+staff	pelayan
+staffnya	pelayannya
+super	sangat
+table	meja
+venue	tempat
+venuenya	tempatnya
+viewnya	pemandangannya
+view	pemandangan
+waiter	pelayan
+waiternya	pelayannya
+waiters	pelayan
+waitersnya	pelayannya
+waitress	pelayan
+waiting list	daftar tunggu
+worth it	setimpal
+venue	tempat
+venuenya	tempatnya
+venue-nya	tempatnya
+you	kamu
+yummy	enak

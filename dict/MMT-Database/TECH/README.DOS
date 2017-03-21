@@ -1,0 +1,14 @@
+* Indonesian technical term dictionary
+
+  - File name : TECH
+                TECH.dos (for DOS CR/LF)
+
+  - Data format :
+     Information of each term are shown between the line of "%0" and
+     the previous line of the next "%0".
+
+     %0  Sequential number
+     %1  Headword
+     %2  Part of speech
+     %8  English equivalent term
+     %B  reduplication ("INNR" denotes reduplication can be performed)

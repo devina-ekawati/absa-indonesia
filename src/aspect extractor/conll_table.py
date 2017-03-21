@@ -79,7 +79,7 @@ class CONLLTable :
 						sentence += value[self.id_word] + " "
 		return sentence[:-1]
 
-	def get_sentences(self, remove_punctuation=True, remove_stopword=False, start=0, end=None):
+	def get_sentences(self, start=0, end=None, remove_punctuation=True, remove_stopword=False):
 		if (end == None):
 			end = len(self.tables)
 
@@ -194,7 +194,7 @@ class CONLLTable :
 					for line_word in line_sentence:
 						tokens = line_word.split("\t")
 
-						CONLL_sentence[int(tokens[0])] = (tokens[1], tokens[3].lower(), int(tokens[6]), tokens[7], tokens[10])
+						CONLL_sentence[int(tokens[0])] = (tokens[1], tokens[3], int(tokens[6]), tokens[7], tokens[10])
 
 					tables.append(collections.OrderedDict(sorted(CONLL_sentence.items())))
 					line_sentence = []
