@@ -18,6 +18,12 @@ class CRFDataGenerator:
 				for line in f:
 					line = line.rstrip()
 					self.aspect_dict.append(line)
+					
+			self.list_unigrams = self.init_n_grams("../../data/list_unigrams.txt")
+			self.list_bigrams = self.init_n_grams("../../data/list_bigrams.txt")
+			self.list_trigrams = self.init_n_grams("../../data/list_trigrams.txt")
+			self.list_pos_tag_trigrams = self.init_n_grams("../../data/list_pos_tag_trigrams.txt")
+
 
 	def init_dependency_tags(self):
 		bag_of_vbot = {}
@@ -27,6 +33,13 @@ class CRFDataGenerator:
 				tokens = line.split()
 				bag_of_vbot[tokens[0]] = 0
 		return bag_of_vbot
+
+	def init_n_grams(self, filename):
+		result = []
+		with open(filename, "r") as f:
+			for line in f:
+				result.append(line.rstrip())
+		return result
 
 	def get_list_unigrams(self):
 		return self.list_unigrams
@@ -258,27 +271,28 @@ if __name__ == '__main__':
 	cdg = CRFDataGenerator(testing)
 	cdg.generate_data(filename, start1, end1, start2, end2)
 
-	with open("../../data/list_unigrams.txt", 'w') as f:
-		for word in cdg.get_list_unigrams():
-			f.write(word + "\n")
+	if (not testing):
+		with open("../../data/list_unigrams.txt", 'w') as f:
+			for word in cdg.get_list_unigrams():
+				f.write(word + "\n")
 
-	with open("../../data/list_bigrams.txt", 'w') as f:
-		for bigrams in cdg.get_list_bigrams():
-			line = ','.join(str(x) for x in bigrams)
-			f.write(line + "\n")
+		with open("../../data/list_bigrams.txt", 'w') as f:
+			for bigrams in cdg.get_list_bigrams():
+				line = ','.join(str(x) for x in bigrams)
+				f.write(line + "\n")
 
-	with open("../../data/list_trigrams.txt", 'w') as f:
-		for trigrams in cdg.get_list_trigrams():
-			line = ','.join(str(x) for x in trigrams)
-			f.write(line + "\n")
+		with open("../../data/list_trigrams.txt", 'w') as f:
+			for trigrams in cdg.get_list_trigrams():
+				line = ','.join(str(x) for x in trigrams)
+				f.write(line + "\n")
 
-	with open("../../data/list_pos_tag_trigrams.txt", 'w') as f:
-		for trigrams in cdg.get_list_pos_tag_trigrams():
-			line = ','.join(str(x) for x in trigrams)
-			f.write(line + "\n")
+		with open("../../data/list_pos_tag_trigrams.txt", 'w') as f:
+			for trigrams in cdg.get_list_pos_tag_trigrams():
+				line = ','.join(str(x) for x in trigrams)
+				f.write(line + "\n")
 
-	with open("../../data/aspect_dict.txt", "w") as f:
-		for word in cdg.get_aspect_dictionary():
-			f.write(word + "\n")
+		with open("../../data/aspect_dict.txt", "w") as f:
+			for word in cdg.get_aspect_dictionary():
+				f.write(word + "\n")
 
 	
