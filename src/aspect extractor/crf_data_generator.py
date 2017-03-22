@@ -1,16 +1,23 @@
-import nltk
+import nltk, sys
 from conll_table import CONLLTable
 from nltk import word_tokenize
 from nltk.util import ngrams
 from collections import Counter
 
 class CRFDataGenerator:
-	def __init__(self):
+	def __init__(self, testing=False):
+		self.testing = testing
 		self.list_unigrams = []
 		self.list_bigrams = []
 		self.list_trigrams = []
 		self.list_pos_tag_trigrams = []
 		self.CONLL_table = CONLLTable("../../data/output1.conll")
+		self.aspect_dict = []
+		if (testing):
+			with open("../../data/aspect_dict.txt", "r") as f:
+				for line in f:
+					line = line.rstrip()
+					self.aspect_dict.append(line)
 
 	def init_dependency_tags(self):
 		bag_of_vbot = {}
@@ -32,6 +39,10 @@ class CRFDataGenerator:
 
 	def get_list_pos_tag_trigrams(self):
 		return self.list_pos_tag_trigrams
+
+	def get_aspect_dictionary(self):
+		return self.aspect_dict
+
 
 	def get_window_text(self, n, tokens, pos):
 		center = int(n/2) + 1
@@ -73,6 +84,8 @@ class CRFDataGenerator:
 		window_ngrams = Counter(ngrams(nltk.word_tokenize(window_text), n))
 
 		for n_grams in list_n_grams:
+			if (n == 1):
+				n_grams = (n_grams,)
 			if (n_grams in window_ngrams):
 				line += " " + str(window_ngrams[n_grams])
 			else:
@@ -106,28 +119,71 @@ class CRFDataGenerator:
 			line += " no"
 		return line
 
+	def get_aspect(self, id_sentence, id_word, word, label):
+		aspect = ""
+		if (label == "ASPECT-B" or label == "ASPECT-I"):
+			aspect = word
+			if (label == "ASPECT-I"):
+				aspect = word
+				prev_id_word = id_word - 1
+
+				while prev_id_word > 0 and self.CONLL_table.is_id_exist(id_sentence, prev_id_word):
+					prev_row = self.CONLL_table.get_row(id_sentence, prev_id_word)
+					temp = aspect
+					aspect = self.CONLL_table.get_word(prev_row) + " " + temp
+
+					if (self.CONLL_table.get_label(prev_row) != "ASPECT-I"):
+						break;
+					else:
+						prev_id_word -= 1
+
+
+			next_id_word = id_word + 1
+			while next_id_word <= self.CONLL_table.get_sentence_size(id_sentence)+1 and self.CONLL_table.is_id_exist(id_sentence, next_id_word):
+				next_row = self.CONLL_table.get_row(id_sentence, next_id_word)
+				if (self.CONLL_table.get_label(next_row) != "ASPECT-I"):
+					break;
+				else:
+					aspect += " " + self.CONLL_table.get_word(next_row)
+					next_id_word += 1
+
+		return aspect
+
 	def get_feature(self, id_sentence, id_word):
 		row = self.CONLL_table.get_row(id_sentence, id_word)
-		line = self.CONLL_table.get_word(row) + " " + self.CONLL_table.get_pos_tag(row)
-
 		label = self.CONLL_table.get_label(row)
+
+		line = self.CONLL_table.get_word(row) + " " + self.CONLL_table.get_pos_tag(row)
+		aspect = self.get_aspect(id_sentence, id_word, self.CONLL_table.get_word(row), label)
+
+		if (self.testing):
+			if (aspect != ""):
+				if (aspect in self.aspect_dict):
+					line += " yes"
+				else:
+					line += " no"
+			else:
+				line += " no"
+		else:
+			line += self.get_dict_feature(label)
+			self.aspect_dict.append(aspect)
 		
-		window_text = self.get_window_text(5, self.CONLL_table.get_sentence(id_sentence).split(), id_word)
-		
+		window_text = self.get_window_text(5, self.CONLL_table.get_sentence(id_sentence).split(), id_word)	
+		print window_text	
 		line += self.get_n_grams_feature(1, window_text, self.list_unigrams)
 		line += self.get_n_grams_feature(2, window_text, self.list_bigrams)
 		line += self.get_n_grams_feature(3, window_text, self.list_trigrams)
 
 		window_pos_tag = self.get_window_text(5, self.CONLL_table.get_sentence_pos_tag(id_sentence).split(), id_word)
 		line += self.get_n_grams_feature(3, window_pos_tag, self.list_pos_tag_trigrams)
-
+		
 		return line + " " + label + "\n"
 
 	def generate_data(self, filename, start=0, end=None):
 		reviews = self.CONLL_table.get_sentences(start, end)
 
 		filter = ["NOUN", "ADJ", "ADV", "VERB"]
-		unigrams = self.get_n_grams(1, self.CONLL_table.get_filtered_sentences(filter))
+		unigrams = self.get_n_grams(1, self.CONLL_table.get_filtered_sentences(filter, start, end))
 
 		bigrams = [b for l in reviews for b in zip(l.split(" ")[:-1], l.split(" ")[1:])]
 		bigrams = Counter(bigrams)
@@ -148,15 +204,33 @@ class CRFDataGenerator:
 			self.list_pos_tag_trigrams.append(key)
 
 		with open(filename, 'w') as f:
-			for i in range(self.CONLL_table.get_sentences_size()):
-				for j in range(self.CONLL_table.get_sentence_size(i)):
-					f.write(self.get_feature(i, j+1))
+			for i in range(start, end):
+				for j in range(self.CONLL_table.get_sentence_size(i)+1):
+					if (self.CONLL_table.is_id_exist(i, j+1)):
+						f.write(self.get_feature(i, j+1))
 				f.write("\n")
 
 
 if __name__ == '__main__':
-	cdg = CRFDataGenerator()
-	cdg.generate_data('../../data/train_CRF.txt')
+	if (len(sys.argv) == 2):
+		filename = sys.argv[1]
+		testing = False
+		start = 0
+		end = None
+	elif (len(sys.argv) == 5):
+		if (sys.argv[2].lower() == "true"):
+			testing = True
+		else:
+			testing = False
+		filename = sys.argv[1]
+		start = int(sys.argv[3])
+		end = int(sys.argv[4])
+	else:
+		print("Syntax: ", sys.argv[0], "<output file> <testing> <start> <end>")
+		sys.exit(1)
+
+	cdg = CRFDataGenerator(testing)
+	cdg.generate_data(filename, start, end)
 
 	with open("../../data/list_unigrams.txt", 'w') as f:
 		for word in cdg.get_list_unigrams():
@@ -176,5 +250,9 @@ if __name__ == '__main__':
 		for trigrams in cdg.get_list_pos_tag_trigrams():
 			line = ','.join(str(x) for x in trigrams)
 			f.write(line + "\n")
+
+	with open("../../data/aspect_dict.txt", "w") as f:
+		for word in cdg.get_aspect_dictionary():
+			f.write(word + "\n")
 
 	

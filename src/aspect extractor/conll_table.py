@@ -39,10 +39,13 @@ class CONLLTable :
 		id_parent = self.get_parent(value)
 		return self.get_row(id_sentence, id_parent)
 
+	def is_id_exist(self, id_sentence, id):
+		return id in self.tables[id_sentence]
+
 	def get_sentences_size(self):
 		return len(self.tables)
 
-	def get_sentence_size(self, id_sentence, remove_punctuation=True, remove_stopword=False):
+	def get_sentence_size(self, id_sentence, remove_punctuation=False, remove_stopword=False):
 		size = 0
 		if (remove_punctuation):
 			for key, value in self.tables[id_sentence].iteritems():
@@ -61,7 +64,7 @@ class CONLLTable :
 
 		return size
 
-	def get_sentence(self, id_sentence, remove_punctuation=True, remove_stopword=False):
+	def get_sentence(self, id_sentence, remove_punctuation=False, remove_stopword=False):
 		sentence = ""
 		for key, value in self.tables[id_sentence].iteritems():
 			if (remove_punctuation):
@@ -75,14 +78,14 @@ class CONLLTable :
 				if (remove_stopword):
 					if (value[self.id_word] not in self.stopword):
 						sentence += value[self.id_word] + " "
-					else:
-						sentence += value[self.id_word] + " "
+				else:
+					sentence += value[self.id_word] + " "
 		return sentence[:-1]
 
-	def get_sentences(self, start=0, end=None, remove_punctuation=True, remove_stopword=False):
+	def get_sentences(self, start=0, end=None, remove_punctuation=False, remove_stopword=False):
 		if (end == None):
 			end = len(self.tables)
-
+			
 		sentences = []
 		tables = self.tables
 		for i in range(start, end):
@@ -90,11 +93,13 @@ class CONLLTable :
 
 		return sentences
 
-	def get_filtered_sentences(self, filter=None):
+	def get_filtered_sentences(self, filter=None, start=0, end=None):
+		if (end == None):
+			end = len(self.tables)
 		sentences = []
 
 		tables = self.tables
-		for i in range(len(tables)):
+		for i in range(start, end):
 			result = self.filter_words_by_pos_tag(i, filter)
 			sentence = ""
 			for key, value in result.iteritems():
@@ -103,7 +108,7 @@ class CONLLTable :
 
 		return sentences
 
-	def get_sentence_pos_tag(self, id_sentence, remove_punctuation=True, remove_stopword=False):
+	def get_sentence_pos_tag(self, id_sentence, remove_punctuation=False, remove_stopword=False):
 		sentence_pos_tag = ""
 		for key, value in self.tables[id_sentence].iteritems():
 			if (remove_punctuation):
@@ -116,13 +121,13 @@ class CONLLTable :
 			else:
 				if (remove_stopword):
 					if (value[self.id_word] not in self.stopword):
-						sentence += value[self.id_pos_tag] + " "
-					else:
-						sentence += value[self.id_pos_tag] + " "
+						sentence_pos_tag += value[self.id_pos_tag] + " "
+				else:
+					sentence_pos_tag += value[self.id_pos_tag] + " "
 
 		return sentence_pos_tag[:-1]
 
-	def get_sentences_pos_tag(self, remove_punctuation=True, remove_stopword=False):
+	def get_sentences_pos_tag(self, remove_punctuation=False, remove_stopword=False):
 		sentences = []
 		tables = self.tables
 		for i in range(len(tables)):
@@ -130,17 +135,17 @@ class CONLLTable :
 
 		return sentences
 
-	def get_siblings(self, id_sibling, id_sentence, tag_filter=None, start=0, end=None, remove_punctuation=True):
+	def get_siblings(self, id_sibling, id_sentence, tag_filter=None, start=0, end=None, remove_punctuation=False):
 		siblings = {}
 		id_parent = self.get_parent(self.tables[id_sentence][id_sibling])
 
-		siblings = self.get_children(id_parent, id_sentence, tag_filter=None, start=0, end=None, remove_punctuation=True)
+		siblings = self.get_children(id_parent, id_sentence, tag_filter=None, start=0, end=None, remove_punctuation=False)
 		siblings.pop(id_sibling)
 
 		return siblings
 
 
-	def get_children(self, id_parent, id_sentence, tag_filter=None, start=0, end=None, remove_punctuation=True):
+	def get_children(self, id_parent, id_sentence, tag_filter=None, start=0, end=None, remove_punctuation=False):
 		children = {}
 
 		if end is None:
@@ -193,8 +198,8 @@ class CONLLTable :
 					CONLL_sentence = {}
 					for line_word in line_sentence:
 						tokens = line_word.split("\t")
-
-						CONLL_sentence[int(tokens[0])] = (tokens[1], tokens[3], int(tokens[6]), tokens[7], tokens[10])
+						if (tokens[1] != "." and tokens[1] != ","):
+							CONLL_sentence[int(tokens[0])] = (tokens[1], tokens[3], int(tokens[6]), tokens[7], tokens[10])
 
 					tables.append(collections.OrderedDict(sorted(CONLL_sentence.items())))
 					line_sentence = []
@@ -213,7 +218,7 @@ if __name__ == "__main__":
 
 	# print CONLL_table.get_sentence(0)
 
-	print CONLL_table.get_sentences()
+	print CONLL_table.get_sentences(99, 991)
 
 	# filter = ["NOUN", "ADJ", "ADV", "VERB"]
 	# print CONLL_table.filter_words_by_pos_tag(0, filter)
