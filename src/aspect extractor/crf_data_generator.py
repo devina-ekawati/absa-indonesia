@@ -222,14 +222,14 @@ class CRFDataGenerator:
 			self.list_pos_tag_trigrams.append(key)
 
 		with open(filename, 'w') as f:
-			for i in range(start1, end1):
+			for i in range(start1, end1+1):
 				for j in range(self.CONLL_table.get_sentence_size(i)+1):
 					if (self.CONLL_table.is_id_exist(i, j+1)):
 						f.write(self.get_feature(i, j+1))
 				f.write("\n")
 
 			if (start2 != None and end2 != None):
-				for i in range(start2, end2):
+				for i in range(start2, end2+1):
 					for j in range(self.CONLL_table.get_sentence_size(i)+1):
 						if (self.CONLL_table.is_id_exist(i, j+1)):
 							f.write(self.get_feature(i, j+1))
