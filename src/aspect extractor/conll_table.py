@@ -93,18 +93,27 @@ class CONLLTable :
 
 		return sentences
 
-	def get_filtered_sentences(self, filter=None, start=0, end=None):
-		if (end == None):
-			end = len(self.tables)
+	def get_filtered_sentences(self, filter=None, start1=0, end1=None, start2=None, end2=None):
+		if (end1 == None):
+			end1 = len(self.tables)
 		sentences = []
 
 		tables = self.tables
-		for i in range(start, end):
+		for i in range(start1, end1):
 			result = self.filter_words_by_pos_tag(i, filter)
 			sentence = ""
 			for key, value in result.iteritems():
 				sentence += value + " "
 			sentences.append(sentence[:-1])
+
+		if (start2 != None and end2 != None):
+			for i in range(start2, end2):
+				result = self.filter_words_by_pos_tag(i, filter)
+				sentence = ""
+				for key, value in result.iteritems():
+					sentence += value + " "
+				sentences.append(sentence[:-1])
+
 
 		return sentences
 

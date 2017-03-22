@@ -168,8 +168,7 @@ class CRFDataGenerator:
 			line += self.get_dict_feature(label)
 			self.aspect_dict.append(aspect)
 		
-		window_text = self.get_window_text(5, self.CONLL_table.get_sentence(id_sentence).split(), id_word)	
-		print window_text	
+		window_text = self.get_window_text(5, self.CONLL_table.get_sentence(id_sentence).split(), id_word)
 		line += self.get_n_grams_feature(1, window_text, self.list_unigrams)
 		line += self.get_n_grams_feature(2, window_text, self.list_bigrams)
 		line += self.get_n_grams_feature(3, window_text, self.list_trigrams)
@@ -179,11 +178,17 @@ class CRFDataGenerator:
 		
 		return line + " " + label + "\n"
 
-	def generate_data(self, filename, start=0, end=None):
-		reviews = self.CONLL_table.get_sentences(start, end)
+	def generate_data(self, filename, start1=0, end1=None, start2=None, end2=None):
+		if (end1 == None):
+			end1 = self.CONLL_table.get_sentences_size()
+
+		reviews = self.CONLL_table.get_sentences(start1, end1)
+
+		if (start2 != None and end2 != None):
+			reviews += self.CONLL_table.get_sentences(start2, end2)
 
 		filter = ["NOUN", "ADJ", "ADV", "VERB"]
-		unigrams = self.get_n_grams(1, self.CONLL_table.get_filtered_sentences(filter, start, end))
+		unigrams = self.get_n_grams(1, self.CONLL_table.get_filtered_sentences(filter, start1, end1, start2, end2))
 
 		bigrams = [b for l in reviews for b in zip(l.split(" ")[:-1], l.split(" ")[1:])]
 		bigrams = Counter(bigrams)
@@ -204,33 +209,54 @@ class CRFDataGenerator:
 			self.list_pos_tag_trigrams.append(key)
 
 		with open(filename, 'w') as f:
-			for i in range(start, end):
+			for i in range(start1, end1):
 				for j in range(self.CONLL_table.get_sentence_size(i)+1):
 					if (self.CONLL_table.is_id_exist(i, j+1)):
 						f.write(self.get_feature(i, j+1))
 				f.write("\n")
+
+			if (start2 != None and end2 != None):
+				for i in range(start2, end2):
+					for j in range(self.CONLL_table.get_sentence_size(i)+1):
+						if (self.CONLL_table.is_id_exist(i, j+1)):
+							f.write(self.get_feature(i, j+1))
+					f.write("\n")
 
 
 if __name__ == '__main__':
 	if (len(sys.argv) == 2):
 		filename = sys.argv[1]
 		testing = False
-		start = 0
-		end = None
+		start1 = 0
+		end1 = None
+		start2 = None
+		end2 = None
 	elif (len(sys.argv) == 5):
 		if (sys.argv[2].lower() == "true"):
 			testing = True
 		else:
 			testing = False
 		filename = sys.argv[1]
-		start = int(sys.argv[3])
-		end = int(sys.argv[4])
+		start1 = int(sys.argv[3])
+		end1 = int(sys.argv[4])
+		start2 = None
+		end2 = None
+	elif (len(sys.argv) == 7):
+		if (sys.argv[2].lower() == "true"):
+			testing = True
+		else:
+			testing = False
+		filename = sys.argv[1]
+		start1 = int(sys.argv[3])
+		end1 = int(sys.argv[4])
+		start2 = int(sys.argv[5])
+		end2 = int(sys.argv[6])
 	else:
-		print("Syntax: ", sys.argv[0], "<output file> <testing> <start> <end>")
+		print("Syntax: ", sys.argv[0], "<output file> <testing> <start1> <end1> <start2> <end2>")
 		sys.exit(1)
 
 	cdg = CRFDataGenerator(testing)
-	cdg.generate_data(filename, start, end)
+	cdg.generate_data(filename, start1, end1, start2, end2)
 
 	with open("../../data/list_unigrams.txt", 'w') as f:
 		for word in cdg.get_list_unigrams():

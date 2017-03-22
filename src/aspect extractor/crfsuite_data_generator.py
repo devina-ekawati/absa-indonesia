@@ -31,7 +31,7 @@ def generate_templates(unigram_filename, bigram_filename, ngram_filename, ngram_
 	generate_templates_from_file(bigram_filename, "B")
 	generate_templates_from_file(ngram_filename, "T")
 	generate_templates_from_file(ngram_pos_tag_filename, "TP")
-	generate_templates_from_file(dependency_tags_filename, "D")
+	# generate_templates_from_file(dependency_tags_filename, "D")
 
 	fields += ' y'
 
