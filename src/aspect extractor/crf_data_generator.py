@@ -182,18 +182,23 @@ class CRFDataGenerator:
 			self.aspect_dict.append(aspect)
 		
 		window_text = self.get_window_text(5, self.CONLL_table.get_sentence(id_sentence).split(), id_word)
-		line += self.get_n_grams_feature(1, window_text, self.list_unigrams)
+		# line += self.get_n_grams_feature(1, window_text, self.list_unigrams)
 		line += self.get_n_grams_feature(2, window_text, self.list_bigrams)
-		line += self.get_n_grams_feature(3, window_text, self.list_trigrams)
+		# line += self.get_n_grams_feature(3, window_text, self.list_trigrams)
 
-		window_pos_tag = self.get_window_text(5, self.CONLL_table.get_sentence_pos_tag(id_sentence).split(), id_word)
-		line += self.get_n_grams_feature(3, window_pos_tag, self.list_pos_tag_trigrams)
+		# window_pos_tag = self.get_window_text(5, self.CONLL_table.get_sentence_pos_tag(id_sentence).split(), id_word)
+		# line += self.get_n_grams_feature(3, window_pos_tag, self.list_pos_tag_trigrams)
 		
 		return line + " " + label + "\n"
 
 	def generate_data(self, filename, start1=0, end1=None, start2=None, end2=None):
 		if (end1 == None):
 			end1 = self.CONLL_table.get_sentences_size()
+		else:
+			end1 += 1
+
+		if (end2 != None):
+			end2 += 1
 
 		reviews = self.CONLL_table.get_sentences(start1, end1)
 
@@ -223,14 +228,14 @@ class CRFDataGenerator:
 				self.list_pos_tag_trigrams.append(key)
 
 		with open(filename, 'w') as f:
-			for i in range(start1, end1+1):
+			for i in range(start1, end1):
 				for j in range(self.CONLL_table.get_sentence_size(i)+1):
 					if (self.CONLL_table.is_id_exist(i, j+1)):
 						f.write(self.get_feature(i, j+1))
 				f.write("\n")
 
 			if (start2 != None and end2 != None):
-				for i in range(start2, end2+1):
+				for i in range(start2, end2):
 					for j in range(self.CONLL_table.get_sentence_size(i)+1):
 						if (self.CONLL_table.is_id_exist(i, j+1)):
 							f.write(self.get_feature(i, j+1))
