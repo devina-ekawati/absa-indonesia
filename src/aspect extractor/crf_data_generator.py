@@ -209,17 +209,18 @@ class CRFDataGenerator:
 		trigrams = self.get_n_grams(3, reviews)
 		trigrams_postag = self.get_n_grams(3, self.CONLL_table.get_sentences_pos_tag())
 
-		for key in unigrams:
-			self.list_unigrams.append(key)
+		if (not self.testing):
+			for key in unigrams:
+				self.list_unigrams.append(key)
 
-		for key in bigrams:
-			self.list_bigrams.append(key)
+			for key in bigrams:
+				self.list_bigrams.append(key)
 
-		for key in trigrams:
-			self.list_trigrams.append(key)
+			for key in trigrams:
+				self.list_trigrams.append(key)
 
-		for key in trigrams_postag:
-			self.list_pos_tag_trigrams.append(key)
+			for key in trigrams_postag:
+				self.list_pos_tag_trigrams.append(key)
 
 		with open(filename, 'w') as f:
 			for i in range(start1, end1+1):
