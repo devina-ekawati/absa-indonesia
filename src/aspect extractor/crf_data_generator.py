@@ -11,8 +11,8 @@ class CRFDataGenerator:
 		self.list_bigrams = []
 		self.list_trigrams = []
 		self.list_pos_tag_trigrams = []
-		self.list_word_embedding = range(1, 101)
-		self.word2vec_cluster = self.init_word_embedding_cluster("../../data/word_embedding/word2vec_cluster.txt")
+		# self.list_word_embedding = range(1, 101)
+		# self.word2vec_cluster = self.init_word_embedding_cluster("../../data/word_embedding/word2vec_cluster.txt")
 		self.CONLL_table = CONLLTable("../../data/output1.conll")
 		self.aspect_dict = []
 		if (testing):
