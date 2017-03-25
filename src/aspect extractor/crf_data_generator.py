@@ -11,28 +11,39 @@ class CRFDataGenerator:
 		self.list_bigrams = []
 		self.list_trigrams = []
 		self.list_pos_tag_trigrams = []
+		self.list_word_embedding = range(1, 101)
+		self.word2vec_cluster = self.init_word_embedding_cluster("../../data/word_embedding/word2vec_cluster.txt")
 		self.CONLL_table = CONLLTable("../../data/output1.conll")
 		self.aspect_dict = []
 		if (testing):
-			with open("../../data/aspect_dict.txt", "r") as f:
+			with open("../../data/crf/aspect_dict.txt", "r") as f:
 				for line in f:
 					line = line.rstrip()
 					self.aspect_dict.append(line)
 					
-			self.list_unigrams = self.init_n_grams("../../data/list_unigrams.txt")
-			self.list_bigrams = self.init_n_grams("../../data/list_bigrams.txt")
-			self.list_trigrams = self.init_n_grams("../../data/list_trigrams.txt")
-			self.list_pos_tag_trigrams = self.init_n_grams("../../data/list_pos_tag_trigrams.txt")
+			self.list_unigrams = self.init_n_grams("../../data/crf/list_unigrams.txt")
+			self.list_bigrams = self.init_n_grams("../../data/crf/list_bigrams.txt")
+			self.list_trigrams = self.init_n_grams("../../data/crf/list_trigrams.txt")
+			self.list_pos_tag_trigrams = self.init_n_grams("../../data/crf/list_pos_tag_trigrams.txt")
 
 
 	def init_dependency_tags(self):
 		bag_of_vbot = {}
-		with open("../../data/dependency_tags.txt", "r") as f:
+		with open("../../data/crf/dependency_tags.txt", "r") as f:
 			for line in f:
 				line = line.rstrip()
 				tokens = line.split()
 				bag_of_vbot[tokens[0]] = 0
 		return bag_of_vbot
+
+	def init_word_embedding_cluster(self, filename):
+		cluster = {}
+		with open(filename, "r") as f:
+			for line in f:
+				line = line.rstrip()
+				tokens = line.split()
+				cluster[tokens[0]] = int(tokens[1])
+		return cluster
 
 	def init_n_grams(self, filename):
 		result = []
@@ -55,7 +66,6 @@ class CRFDataGenerator:
 
 	def get_aspect_dictionary(self):
 		return self.aspect_dict
-
 
 	def get_window_text(self, n, tokens, pos):
 		center = int(n/2) + 1
@@ -162,32 +172,48 @@ class CRFDataGenerator:
 
 		return aspect
 
+	def get_word_embedding_sentence(self, id_sentence, word_embedding_cluster):
+		word_embedding = ""
+		tokens = self.CONLL_table.get_sentence(id_sentence).split()
+
+		for token in tokens:
+			if token in word_embedding_cluster:
+				word_embedding += str(word_embedding_cluster[token]) + " "
+			else:
+				word_embedding += "0 "
+
+		return word_embedding[:-1]
+
 	def get_feature(self, id_sentence, id_word):
 		row = self.CONLL_table.get_row(id_sentence, id_word)
 		label = self.CONLL_table.get_label(row)
 
 		line = self.CONLL_table.get_word(row) + " " + self.CONLL_table.get_pos_tag(row)
-		aspect = self.get_aspect(id_sentence, id_word, self.CONLL_table.get_word(row), label)
+		# aspect = self.get_aspect(id_sentence, id_word, self.CONLL_table.get_word(row), label)
 
-		if (self.testing):
-			if (aspect != ""):
-				if (aspect in self.aspect_dict):
-					line += " yes"
-				else:
-					line += " no"
-			else:
-				line += " no"
-		else:
-			line += self.get_dict_feature(label)
-			self.aspect_dict.append(aspect)
+		# if (self.testing):
+		# 	if (aspect != ""):
+		# 		if (aspect in self.aspect_dict):
+		# 			line += " yes"
+		# 		else:
+		# 			line += " no"
+		# 	else:
+		# 		line += " no"
+		# else:
+		# 	line += self.get_dict_feature(label)
+		# 	self.aspect_dict.append(aspect)
 		
 		window_text = self.get_window_text(5, self.CONLL_table.get_sentence(id_sentence).split(), id_word)
-		# line += self.get_n_grams_feature(1, window_text, self.list_unigrams)
-		line += self.get_n_grams_feature(2, window_text, self.list_bigrams)
+		line += self.get_n_grams_feature(1, window_text, self.list_unigrams)
+		# line += self.get_n_grams_feature(2, window_text, self.list_bigrams)
 		# line += self.get_n_grams_feature(3, window_text, self.list_trigrams)
 
 		# window_pos_tag = self.get_window_text(5, self.CONLL_table.get_sentence_pos_tag(id_sentence).split(), id_word)
 		# line += self.get_n_grams_feature(3, window_pos_tag, self.list_pos_tag_trigrams)
+
+		# word2vec_window = self.get_window_text(5, self.get_word_embedding_sentence(id_sentence, self.word2vec_cluster), id_word)
+		# line += self.get_n_grams_feature(2, word2vec_window, self.list_word_embedding)
+
 		
 		return line + " " + label + "\n"
 
@@ -197,12 +223,10 @@ class CRFDataGenerator:
 		else:
 			end1 += 1
 
-		if (end2 != None):
-			end2 += 1
-
 		reviews = self.CONLL_table.get_sentences(start1, end1)
 
 		if (start2 != None and end2 != None):
+			end2 += 1
 			reviews += self.CONLL_table.get_sentences(start2, end2)
 
 		filter = ["NOUN", "ADJ", "ADV", "VERB"]
@@ -278,26 +302,26 @@ if __name__ == '__main__':
 	cdg.generate_data(filename, start1, end1, start2, end2)
 
 	if (not testing):
-		with open("../../data/list_unigrams.txt", 'w') as f:
+		with open("../../data/crf/list_unigrams.txt", 'w') as f:
 			for word in cdg.get_list_unigrams():
 				f.write(word + "\n")
 
-		with open("../../data/list_bigrams.txt", 'w') as f:
+		with open("../../data/crf/list_bigrams.txt", 'w') as f:
 			for bigrams in cdg.get_list_bigrams():
 				line = ','.join(str(x) for x in bigrams)
 				f.write(line + "\n")
 
-		with open("../../data/list_trigrams.txt", 'w') as f:
+		with open("../../data/crf/list_trigrams.txt", 'w') as f:
 			for trigrams in cdg.get_list_trigrams():
 				line = ','.join(str(x) for x in trigrams)
 				f.write(line + "\n")
 
-		with open("../../data/list_pos_tag_trigrams.txt", 'w') as f:
+		with open("../../data/crf/list_pos_tag_trigrams.txt", 'w') as f:
 			for trigrams in cdg.get_list_pos_tag_trigrams():
 				line = ','.join(str(x) for x in trigrams)
 				f.write(line + "\n")
 
-		with open("../../data/aspect_dict.txt", "w") as f:
+		with open("../../data/crf/aspect_dict.txt", "w") as f:
 			for word in cdg.get_aspect_dictionary():
 				f.write(word + "\n")
 

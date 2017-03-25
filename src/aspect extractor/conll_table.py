@@ -207,7 +207,8 @@ class CONLLTable :
 					CONLL_sentence = {}
 					for line_word in line_sentence:
 						tokens = line_word.split("\t")
-						if (tokens[1] != "." and tokens[1] != ","):
+						# if (tokens[1] != "." and tokens[1] != ","):
+						if (tokens[3] != "PUNCT"):
 							CONLL_sentence[int(tokens[0])] = (tokens[1], tokens[3], int(tokens[6]), tokens[7], tokens[10])
 
 					tables.append(collections.OrderedDict(sorted(CONLL_sentence.items())))

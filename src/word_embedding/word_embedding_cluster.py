@@ -76,4 +76,4 @@ if __name__ == "__main__":
     # for c in cluster_to_words:
     #     print cluster_to_words[c]
 
-    write_to_file(cluster_to_words, filename, labels_array)
+    write_to_file(cluster_to_words, cluster_filename, labels_array)

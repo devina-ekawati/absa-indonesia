@@ -1,12 +1,12 @@
 #!/bin/bash
 set -e
 
-CORPUS=../data/MST_sentences.txt
-VOCAB_FILE=../data/MST/glove/vocab.txt
-COOCCURRENCE_FILE=../data/MST/glove/cooccurrence.bin
-COOCCURRENCE_SHUF_FILE=../data/MST/glove/cooccurrence.shuf.bin
+CORPUS=../../data/reviews/preprocessed_reviews_sentence.txt
+VOCAB_FILE=../../data/MST/glove/vocab.txt
+COOCCURRENCE_FILE=../../data/MST/glove/cooccurrence.bin
+COOCCURRENCE_SHUF_FILE=../../data/MST/glove/cooccurrence.shuf.bin
 BUILDDIR=glove
-SAVE_FILE=../data/MST/glove/glove.model
+SAVE_FILE=../../data/MST/glove/glove.model
 VERBOSE=2
 MEMORY=4.0
 VOCAB_MIN_COUNT=5
