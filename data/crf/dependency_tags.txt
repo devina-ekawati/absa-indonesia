@@ -1,0 +1,47 @@
+acl : clausal modifier of noun
+acl:relcl : relative clause modifier
+advcl : adverbial clause modifier
+advmod : adverbial modifier
+amod : adjectival modifier
+appos : appositional modifier
+aux : auxiliary
+auxpass : passive auxiliary
+case : case marking
+cc : coordination
+cc:preconj : preconjunct
+ccomp : clausal complement
+compound : compound
+compound:prt : phrasal verb particle
+conj : conjunct
+cop : copula
+csubj : clausal subject
+csubjpass : clausal passive subject
+dep : dependent
+det : determiner
+det:predet : predeterminer
+discourse : discourse element
+dislocated : dislocated elements
+dobj : direct object
+expl : expletive
+foreign : foreign words
+goeswith : goes with
+iobj : indirect object
+list : list
+mark : marker
+mwe : multi-word expression
+name : name
+neg : negation modifier
+nmod : nominal modifier
+nmod:npmod : noun phrase as adverbial modifier
+nmod:poss : possessive nominal modifier
+nmod:tmod : temporal modifier
+nsubj : nominal subject
+nsubjpass : passive nominal subject
+nummod : numeric modifier
+parataxis : parataxis
+punct : punctuation
+remnant : remnant in ellipsis
+reparandum : overridden disfluency
+root : root
+vocative : vocative
+xcomp : open clausal complement
