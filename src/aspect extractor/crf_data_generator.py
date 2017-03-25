@@ -189,27 +189,27 @@ class CRFDataGenerator:
 		label = self.CONLL_table.get_label(row)
 
 		line = self.CONLL_table.get_word(row) + " " + self.CONLL_table.get_pos_tag(row)
-		# aspect = self.get_aspect(id_sentence, id_word, self.CONLL_table.get_word(row), label)
+		aspect = self.get_aspect(id_sentence, id_word, self.CONLL_table.get_word(row), label)
 
-		# if (self.testing):
-		# 	if (aspect != ""):
-		# 		if (aspect in self.aspect_dict):
-		# 			line += " yes"
-		# 		else:
-		# 			line += " no"
-		# 	else:
-		# 		line += " no"
-		# else:
-		# 	line += self.get_dict_feature(label)
-		# 	self.aspect_dict.append(aspect)
+		if (self.testing):
+			if (aspect != ""):
+				if (aspect in self.aspect_dict):
+					line += " yes"
+				else:
+					line += " no"
+			else:
+				line += " no"
+		else:
+			line += self.get_dict_feature(label)
+			self.aspect_dict.append(aspect)
 		
 		window_text = self.get_window_text(5, self.CONLL_table.get_sentence(id_sentence).split(), id_word)
 		line += self.get_n_grams_feature(1, window_text, self.list_unigrams)
-		# line += self.get_n_grams_feature(2, window_text, self.list_bigrams)
-		# line += self.get_n_grams_feature(3, window_text, self.list_trigrams)
+		line += self.get_n_grams_feature(2, window_text, self.list_bigrams)
+		line += self.get_n_grams_feature(3, window_text, self.list_trigrams)
 
-		# window_pos_tag = self.get_window_text(5, self.CONLL_table.get_sentence_pos_tag(id_sentence).split(), id_word)
-		# line += self.get_n_grams_feature(3, window_pos_tag, self.list_pos_tag_trigrams)
+		window_pos_tag = self.get_window_text(5, self.CONLL_table.get_sentence_pos_tag(id_sentence).split(), id_word)
+		line += self.get_n_grams_feature(3, window_pos_tag, self.list_pos_tag_trigrams)
 
 		# word2vec_window = self.get_window_text(5, self.get_word_embedding_sentence(id_sentence, self.word2vec_cluster), id_word)
 		# line += self.get_n_grams_feature(2, word2vec_window, self.list_word_embedding)
