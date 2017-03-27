@@ -10,10 +10,9 @@ separator = ' '
 # Field names of the input data.
 fields = 'w pos dict'
 
-# templates = [(('w', 0),), (('dict', 0),)]
-templates = []
+templates = [(('w', 0),), (('dict', 0),)]
 
-n_cluster = 500
+n_cluster = 5000
 
 unigram_filename = "../../data/crf/list_unigrams.txt"
 bigram_filename = "../../data/crf/list_bigrams.txt"
@@ -36,10 +35,10 @@ def generate_templates_from_file(filename, symbol):
 
 def generate_templates():
 	global fields, templates
-	# generate_templates_from_file(unigram_filename, "U")
-	# generate_templates_from_file(bigram_filename, "B")
-	# generate_templates_from_file(ngram_filename, "T")
-	# generate_templates_from_file(ngram_pos_tag_filename, "TP")
+	generate_templates_from_file(unigram_filename, "U")
+	generate_templates_from_file(bigram_filename, "B")
+	generate_templates_from_file(ngram_filename, "T")
+	generate_templates_from_file(ngram_pos_tag_filename, "TP")
 	# generate_templates_from_file(dependency_tags_filename, "D")
 
 	for i in range(1, n_cluster+1):
@@ -47,7 +46,7 @@ def generate_templates():
 		fields += coloumn
 		templates += [((coloumn[1:], 0),)]
 
-	# generate_templates_from_file(bigram_word2vec_filename, "TP")
+	generate_templates_from_file(bigram_word2vec_filename, "CB")
 
 	fields += ' y'
 

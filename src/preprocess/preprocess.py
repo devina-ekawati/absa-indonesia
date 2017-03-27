@@ -32,7 +32,7 @@ if __name__ == "__main__":
 	preprocess = Preprocess()
 	input_file = sys.argv[1]
 	output_file = sys.argv[2]
-	# regex = re.compile('[^0-9a-zA-Z]+')
+	regex = re.compile('[^0-9a-zA-Z]+')
 
 	lines = []
 	with open(input_file, "r") as f:
@@ -44,7 +44,7 @@ if __name__ == "__main__":
 		for line in lines:
 			sentences = preprocess.splitIntoSentence(line)
 			for sentence in sentences:
-				f.write(re.sub('.,', ' ', preprocess.formalizeSentence(sentence).lower() + " "))
+				f.write(regex.sub(' ', preprocess.formalizeSentence(sentence).lower() + " "))
 				f.write("\n")
 
 	# sentences = "Halo semua. selamat siang."

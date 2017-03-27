@@ -212,17 +212,17 @@ class CRFDataGenerator:
 			line += self.get_dict_feature(label)
 			self.aspect_dict.append(aspect)
 		
-		# window_text = self.get_window_text(5, self.CONLL_table.get_sentence(id_sentence).split(), id_word)
-		# line += self.get_n_grams_feature(1, window_text, self.list_unigrams)
-		# line += self.get_n_grams_feature(2, window_text, self.list_bigrams)
-		# line += self.get_n_grams_feature(3, window_text, self.list_trigrams)
+		window_text = self.get_window_text(5, self.CONLL_table.get_sentence(id_sentence).split(), id_word)
+		line += self.get_n_grams_feature(1, window_text, self.list_unigrams)
+		line += self.get_n_grams_feature(2, window_text, self.list_bigrams)
+		line += self.get_n_grams_feature(3, window_text, self.list_trigrams)
 
-		# window_pos_tag = self.get_window_text(5, self.CONLL_table.get_sentence_pos_tag(id_sentence).split(), id_word)
-		# line += self.get_n_grams_feature(3, window_pos_tag, self.list_pos_tag_trigrams)
+		window_pos_tag = self.get_window_text(5, self.CONLL_table.get_sentence_pos_tag(id_sentence).split(), id_word)
+		line += self.get_n_grams_feature(3, window_pos_tag, self.list_pos_tag_trigrams)
 
 		word2vec_window = self.get_window_text(5, self.get_word_embedding_sentence(id_sentence, self.word2vec_cluster).split(), id_word)
 		line += self.get_n_grams_feature(1, word2vec_window, self.list_word2vec_unigram)
-		# line += self.get_n_grams_feature(2, word2vec_window, self.list_word2vec_bigram)
+		line += self.get_n_grams_feature(2, word2vec_window, self.list_word2vec_bigram)
 
 		return line + " " + label + "\n"
 
