@@ -26,6 +26,7 @@ class CRFDataGenerator:
 			self.list_bigrams = self.init_n_grams("../../data/crf/list_bigrams.txt")
 			self.list_trigrams = self.init_n_grams("../../data/crf/list_trigrams.txt")
 			self.list_pos_tag_trigrams = self.init_n_grams("../../data/crf/list_pos_tag_trigrams.txt")
+			self.list_word2vec_bigram = self.init_n_grams("../../data/crf/list_word2vec_bigrams.txt")
 
 
 	def init_dependency_tags(self):
