@@ -8902,7 +8902,7 @@
 2	gila	_	NOUN	_	fPOS=NOUN++	1	compound	_	_	O
 3	diwaktu	_	VERB	_	fPOS=NOUN++	2	compound	_	_	O
 4	subuh	_	NOUN	_	fPOS=NOUN++	3	compound	_	_	O
-5	terutama	_	ADV	_	fPOS=ADV++	6	advmod	_	_	O
+5	terutama	_	ADV	_	fPOS=ADV++	4	advmod	_	_	O
 6	.	_	PUNCT	_	fPOS=PUNCT++	1	punct	_	_	O
 
 1	:	_	PUNCT	_	fPOS=PUNCT++	0	ROOT	_	_	O
