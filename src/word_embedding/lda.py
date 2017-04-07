@@ -39,7 +39,7 @@ def save_word_matrix(lda, filename):
 			f.write(line + "\n")
 
 if __name__ == "__main__":
-	documents = read_reviews("../data/MST.txt")
+	documents = read_reviews("../../data/reviews/preprocessed_reviews_sentence.txt")
 	lda = build_lda(documents, 50)
 	print "Finish build model"
-	save_word_matrix(lda, "../data/MST/lda.model.txt")
+	save_word_matrix(lda, "../../data/word_embedding/lda50.model.txt")

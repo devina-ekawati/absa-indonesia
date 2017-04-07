@@ -2,14 +2,14 @@
 set -e
 
 CORPUS=../../data/reviews/preprocessed_reviews_sentence.txt
-VOCAB_FILE=../../data/MST/glove/vocab.txt
-COOCCURRENCE_FILE=../../data/MST/glove/cooccurrence.bin
-COOCCURRENCE_SHUF_FILE=../../data/MST/glove/cooccurrence.shuf.bin
+VOCAB_FILE=../../data/word_embedding/glove/vocab.txt
+COOCCURRENCE_FILE=../../data/word_embedding/glove/cooccurrence.bin
+COOCCURRENCE_SHUF_FILE=../../data/word_embedding/glove/cooccurrence.shuf.bin
 BUILDDIR=glove
-SAVE_FILE=../../data/MST/glove/glove.model
+SAVE_FILE=../../data/word_embedding/glove/glove.model
 VERBOSE=2
 MEMORY=4.0
-VOCAB_MIN_COUNT=5
+VOCAB_MIN_COUNT=1
 VECTOR_SIZE=300
 MAX_ITER=100
 WINDOW_SIZE=10

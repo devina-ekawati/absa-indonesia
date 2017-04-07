@@ -8,9 +8,10 @@ from collections import Counter
 separator = ' '
 
 # Field names of the input data.
-fields = 'w pos dict'
+fields = 'w pos dict head'
 
-templates = [(('w', 0),), (('dict', 0),)]
+# templates = [(('w', 0),), (('dict', 0),), (('head', 0),)]
+templates = [(('dict', 0),), (('head', 0),)]
 
 n_cluster = 5000
 

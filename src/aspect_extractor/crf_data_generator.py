@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../model')
+
 import nltk, sys
 from conll_table import CONLLTable
 from nltk import word_tokenize
@@ -212,6 +215,8 @@ class CRFDataGenerator:
 		else:
 			line += self.get_dict_feature(label)
 			self.aspect_dict.append(aspect)
+
+		line += " " + self.CONLL_table.get_head_word_of_word(id_sentence, id_word)
 		
 		window_text = self.get_window_text(5, self.CONLL_table.get_sentence(id_sentence).split(), id_word)
 		line += self.get_n_grams_feature(1, window_text, self.list_unigrams)

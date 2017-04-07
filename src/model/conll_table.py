@@ -8,10 +8,10 @@ class CONLLTable :
 	id_tree_tag = 3
 	id_label = 4
 
-	def __init__(self, filename):
+	def __init__(self, filename, label=True):
 		self.tables = []
 		self.stopword = []
-		self.read_CONLL_from_file(filename)
+		self.read_CONLL_from_file(filename, label)
 		self.read_stopword_list()
 
 	def get_word(self, value):
@@ -179,6 +179,25 @@ class CONLLTable :
 							children[key] = value
 		return children
 
+	def get_head_word_of_word(self, id_sentence, id_word):
+		head = ""
+		value = self.tables[id_sentence][id_word]
+		if "mod" in self.get_tree_tag(value):
+			id_parent = self.get_parent(value)
+			while "mod" in self.get_tree_tag(self.tables[id_sentence][id_parent]):
+				id_parent = self.get_parent(self.tables[id_sentence][id_parent])
+			head = self.get_word(self.tables[id_sentence][id_parent])
+		else:
+			head = self.get_word(value)
+		return head
+
+	def get_head_word_of_sentence(self, id_sentence):
+		words = ""
+		for key, value in self.tables[id_sentence].iteritems():
+			if "mod" not in self.get_tree_tag(value):
+				words += self.get_word(value) + " "
+		return words[:-1]
+
 	def filter_words_by_pos_tag(self, id_sentence, filter):
 		results = {}
 
@@ -195,7 +214,7 @@ class CONLLTable :
 				stopword.append(line.rstrip())
 		self.stopword = stopword
 
-	def read_CONLL_from_file(self, filename):
+	def read_CONLL_from_file(self, filename, label=True):
 		tables = []
 		with open(filename, "r") as f:
 			line_sentence = []
@@ -209,7 +228,10 @@ class CONLLTable :
 						tokens = line_word.split("\t")
 						# if (tokens[1] != "." and tokens[1] != ","):
 						if (tokens[3] != "PUNCT"):
-							CONLL_sentence[int(tokens[0])] = (tokens[1], tokens[3], int(tokens[6]), tokens[7], tokens[10])
+							if (label):
+								CONLL_sentence[int(tokens[0])] = (tokens[1], tokens[3], int(tokens[6]), tokens[7], tokens[10])
+							else:
+								CONLL_sentence[int(tokens[0])] = (tokens[1], tokens[3], int(tokens[6]), tokens[7])
 
 					tables.append(collections.OrderedDict(sorted(CONLL_sentence.items())))
 					line_sentence = []
@@ -228,10 +250,12 @@ if __name__ == "__main__":
 
 	# print CONLL_table.get_sentence(0)
 
-	print CONLL_table.get_sentences(99, 991)
+	# print CONLL_table.get_sentences(99, 991)
 
 	# filter = ["NOUN", "ADJ", "ADV", "VERB"]
 	# print CONLL_table.filter_words_by_pos_tag(0, filter)
 
 	# print CONLL_table.get_sentence(2)
-				
+	
+	print CONLL_table.get_head_word_of_word(3, 4)	
+	print CONLL_table.get_head_word_of_sentence(3)			
