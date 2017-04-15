@@ -1,4 +1,4 @@
-import sys, re
+import sys, re
 sys.path.append("../../lib/InaNLP.jar")
 sys.path.append("../../lib/ipostagger.jar")
 

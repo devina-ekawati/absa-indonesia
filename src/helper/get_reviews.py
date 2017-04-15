@@ -6,8 +6,7 @@ def get_reviews(filename):
 			line = line.rstrip()
 			if line:
 				token = line.split()
-				if (token[0].isalnum()):
-					review += token[0] + " "
+				review += token[0] + " "
 			else :
 				reviews.append(review[:-1])
 				review = ""
@@ -15,7 +14,7 @@ def get_reviews(filename):
 	return reviews
 
 if __name__ == '__main__':
-	reviews = get_reviews("../../data/CRF_dataset.txt")
-	with open("../../CRF_reviews.txt", "w") as f:
+	reviews = get_reviews("../../data/crf/CRF_test.txt")
+	with open("../../CRF_test_reviews.txt", "w") as f:
 		for review in reviews:
 			f.write(review + " .\n")

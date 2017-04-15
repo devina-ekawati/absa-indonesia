@@ -14,12 +14,12 @@ class SentimentExtractor:
 		self.target_names = ['positive', 'negative', 'neutral']
 		self.train_data = []
 		self.train_target = []
-		train_data, train_target = self.read_train_data(filename)
+		train_data, train_target = self.read_data(filename)
 		for i in range(len(self.categories)):
 			self.train_data.append(np.array(train_data[i]))
 			self.train_target.append(np.array(train_target[i]))
 
-	def read_train_data(self, filename):
+	def read_data(self, filename):
 		data = [[], [], [], []]
 		targets = [[], [], [], []]
 		regex = re.compile('[^0-9a-zA-Z]+')
@@ -52,11 +52,6 @@ class SentimentExtractor:
 
                     ('bag_of_ngram', Pipeline([
                         ('selector', ItemSelector(key='sentence')),
-                        ('ngram', CountVectorizer(ngram_range=(1, 5))),
-                    ])),
-
-                    ('bag_of_char', Pipeline([
-                        ('selector', ItemSelector(key='char')),
                         ('ngram', CountVectorizer(ngram_range=(1, 5))),
                     ])),
 
@@ -120,7 +115,12 @@ class SentimentExtractor:
 				vocabulary.append(key)
 		return vocabulary
 
-	def evaluate(self, index):
+	def train(self, index):
+		pipeline = self.get_pipeline(index)
+		model = pipeline.fit(self.train_data[index], self.train_target[index])
+		pickle.dump(model, open("../../data/category_extraction/category_extractor"+str(index)+".model", "wb"))
+
+	def evaluate_cross_validation(self, index):
 		n = 10
 		X_folds = np.array_split(self.train_data[index], n)
 		y_folds = np.array_split(self.train_target[index], n)
@@ -142,7 +142,7 @@ class SentimentExtractor:
 			model = pipeline.fit(X_train, y_train)
 			predicted = pipeline.predict(X_test)
 
-			print classification_report(y_test, predicted)
+			# print classification_report(y_test, predicted)
 
 			precision_scores.append(precision_score(y_test, predicted, average=None).mean())
 			recall_scores.append(recall_score(y_test, predicted, average=None).mean())
@@ -151,11 +151,26 @@ class SentimentExtractor:
 		print "Precision: ", np.array(precision_scores).mean()
 		print "Recall: ", np.array(recall_scores).mean()
 		print "F1-score: ", np.array(f1_scores).mean()
+		
 
+	def evaluate(self, test_filename):
+		test_data, test_target = self.read_data(test_filename)
+		test_data = np.array(test_data)
+
+		for i in range(0, 4):
+			pipeline = self.get_pipeline(i)
+			pipeline.fit(self.train_data[i], self.train_target[i])
+			predicted = pipeline.predict(test_data[i])
+
+			print "Precision: ", precision_score(test_target[i], predicted, average=None)
+			print "Recall: ", recall_score(test_target[i], predicted, average=None)
+			print "F1-score: ", f1_score(test_target[i], predicted, average=None)
 
 if __name__ == '__main__':
 	sentiment_extractor = SentimentExtractor("../../data/sentiment_extraction/train_data.csv")
-	sentiment_extractor.evaluate(0)
-	# sentiment_extractor.evaluate(1)
-	# sentiment_extractor.evaluate(2)
-	# sentiment_extractor.evaluate(3)
+	# sentiment_extractor.evaluate_cross_validation(0)
+	# sentiment_extractor.evaluate_cross_validation(1)
+	# sentiment_extractor.evaluate_cross_validation(2)
+	# sentiment_extractor.evaluate_cross_validation(3)
+
+	sentiment_extractor.evaluate("../../data/sentiment_extraction/test_data.csv")

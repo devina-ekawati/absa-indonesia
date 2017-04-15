@@ -8,19 +8,51 @@ from collections import Counter
 separator = ' '
 
 # Field names of the input data.
-fields = 'w pos dict head'
+fields = 'w pos dict head word2vec y'
+# fields = 'w pos dict head word2vec'
 
 # templates = [(('w', 0),), (('dict', 0),), (('head', 0),)]
-templates = [(('dict', 0),), (('head', 0),)]
+# templates = [(('dict', 0),), (('head', 0),)]
 
-n_cluster = 5000
+templates = [
+	# (('dict', 0), ),
+	(('head', 0), ),
+    (('w', -2), ),
+    (('w', -1), ),
+    (('w',  0), ),
+    (('w',  1), ),
+    (('w',  2), ),
+    (('w', -2), ('w',  -1)),
+    (('w', -1), ('w',  0)),
+    (('w',  0), ('w',  1)),
+    (('w',  1), ('w',  2)),
+    (('w', -2), ('w', -1), ('w',  0)),
+    (('w', -1), ('w',  0), ('w',  1)),
+    (('pos', -2), ),
+    (('pos', -1), ),
+    (('pos',  0), ),
+    (('pos',  1), ),
+    (('pos',  2), ),
+    (('pos', -2), ('pos', -1)),
+    (('pos', -1), ('pos',  0)),
+    (('pos',  0), ('pos',  1)),
+    (('pos',  1), ('pos',  2)),
+    (('pos',  0), ('pos',  1), ('pos',  2)),
+    (('pos', -2), ('pos', -1), ('pos',  0)),
+    (('pos', -1), ('pos',  0), ('pos',  1)),
+    (('pos',  0), ('pos',  1), ('pos',  2)),
+    (('word2vec', -2), ),
+    (('word2vec', -1), ),
+    (('word2vec',  0), ),
+    (('word2vec',  1), ),
+    (('word2vec',  2), ),
+    (('word2vec', -2), ('word2vec',  -1)),
+    (('word2vec', -1), ('word2vec',  0)),
+    (('word2vec',  0), ('word2vec',  1)),
+    (('word2vec',  1), ('word2vec',  2))
+    ]
 
 unigram_filename = "../../data/crf/list_unigrams.txt"
-bigram_filename = "../../data/crf/list_bigrams.txt"
-ngram_filename = "../../data/crf/list_trigrams.txt"
-ngram_pos_tag_filename = "../../data/crf/list_pos_tag_trigrams.txt"
-dependency_tags_filename = "../../data/crf/dependency_tags.txt"
-bigram_word2vec_filename = "../../data/crf/list_word2vec_bigrams.txt"
 
 def generate_templates_from_file(filename, symbol):
 	global fields, templates
@@ -37,17 +69,6 @@ def generate_templates_from_file(filename, symbol):
 def generate_templates():
 	global fields, templates
 	generate_templates_from_file(unigram_filename, "U")
-	generate_templates_from_file(bigram_filename, "B")
-	generate_templates_from_file(ngram_filename, "T")
-	generate_templates_from_file(ngram_pos_tag_filename, "TP")
-	# generate_templates_from_file(dependency_tags_filename, "D")
-
-	for i in range(1, n_cluster+1):
-		coloumn = separator + "C" + str(i)
-		fields += coloumn
-		templates += [((coloumn[1:], 0),)]
-
-	generate_templates_from_file(bigram_word2vec_filename, "CB")
 
 	fields += ' y'
 
@@ -62,6 +83,6 @@ def feature_extractor(X):
 
 
 if __name__ == '__main__':
-	generate_templates()
+	# generate_templates()
 	crfutils.main(feature_extractor, fields=fields, sep=separator)
 	

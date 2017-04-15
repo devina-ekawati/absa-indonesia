@@ -12,7 +12,7 @@ class CONLLTable :
 		self.tables = []
 		self.stopword = []
 		self.read_CONLL_from_file(filename, label)
-		self.read_stopword_list()
+		# self.read_stopword_list()
 
 	def get_word(self, value):
 		return value[self.id_word]
@@ -39,8 +39,8 @@ class CONLLTable :
 		id_parent = self.get_parent(value)
 		return self.get_row(id_sentence, id_parent)
 
-	def is_id_exist(self, id_sentence, id):
-		return id in self.tables[id_sentence]
+	def is_id_exist(self, id_sentence, index):
+		return index in self.tables[id_sentence]
 
 	def get_sentences_size(self):
 		return len(self.tables)
@@ -224,14 +224,16 @@ class CONLLTable :
 					line_sentence.append(line)
 				else:
 					CONLL_sentence = {}
+					i = 0
 					for line_word in line_sentence:
+						i += 1
 						tokens = line_word.split("\t")
 						# if (tokens[1] != "." and tokens[1] != ","):
-						if (tokens[3] != "PUNCT"):
-							if (label):
-								CONLL_sentence[int(tokens[0])] = (tokens[1], tokens[3], int(tokens[6]), tokens[7], tokens[10])
-							else:
-								CONLL_sentence[int(tokens[0])] = (tokens[1], tokens[3], int(tokens[6]), tokens[7])
+						# if (tokens[3] != "PUNCT"):
+						if (label):
+							CONLL_sentence[int(tokens[0])] = (tokens[1], tokens[3], int(tokens[6]), tokens[7], tokens[10])
+						else:
+							CONLL_sentence[int(tokens[0])] = (tokens[1], tokens[3], int(tokens[6]), tokens[7])
 
 					tables.append(collections.OrderedDict(sorted(CONLL_sentence.items())))
 					line_sentence = []
@@ -239,7 +241,7 @@ class CONLLTable :
 
 
 if __name__ == "__main__":
-	CONLL_table = CONLLTable("../../data/output1.conll")
+	CONLL_table = CONLLTable("../../data/output1_test1.conll")
 
 	tables = CONLL_table.get_tables()
 
@@ -247,8 +249,8 @@ if __name__ == "__main__":
 
 	# print CONLL_table.get_children(2, 0)
 	# print CONLL_table.get_siblings(8, 0)
-
-	# print CONLL_table.get_sentence(0)
+	# print CONLL_table.get_sentences_size()
+	# print CONLL_table.get_sentence(381)
 
 	# print CONLL_table.get_sentences(99, 991)
 
@@ -257,5 +259,5 @@ if __name__ == "__main__":
 
 	# print CONLL_table.get_sentence(2)
 	
-	print CONLL_table.get_head_word_of_word(3, 4)	
-	print CONLL_table.get_head_word_of_sentence(3)			
+	# print CONLL_table.get_head_word_of_word(3, 4)	
+	# print CONLL_table.get_head_word_of_sentence(3)			

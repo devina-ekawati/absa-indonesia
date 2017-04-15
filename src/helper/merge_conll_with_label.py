@@ -2,13 +2,13 @@ lines1 = []
 lines2 = []
 results = []
 
-with open("../../data/CRF_dataset.txt", "r") as f:
+with open("../../data/crf/CRF_test.txt", "r") as f:
 	for line in f:
 		line = line.rstrip()
 		if line:
 			lines1.append(line)
 
-with open("../../data/output.conll", "r") as f:
+with open("../../data/output_test.conll", "r") as f:
 	i = 0
 	for line in f:
 		line = line.rstrip()
@@ -20,7 +20,7 @@ print len(lines1)
 print len(lines2)
 
 i = 0
-with open("../../data/output1.conll", "w") as f:
+with open("../../data/output1_test1.conll", "w") as f:
 	for line2 in lines2:
 		tokens1 = lines1[i].split()
 		tokens2 = line2.split()

@@ -5,12 +5,13 @@ from sklearn.multiclass import OneVsRestClassifier
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import MultiLabelBinarizer
+from sklearn.externals import joblib
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, classification_report, confusion_matrix
 import numpy as np
-import csv, re, pickle
+import csv, re
 
 class CategoryExtractor:
-    def __init__(self, filename):
+    def __init__(self, train_filename):
         self.pipeline = Pipeline([
             ('data', FeatureExtractor()),
 
@@ -30,6 +31,11 @@ class CategoryExtractor:
                     ('bag_of_glove', Pipeline([
                         ('selector', ItemSelector(key='glove')),
                         ('ngram', CountVectorizer(ngram_range=(1, 2))),
+                    ])),
+
+                    ('bag_of_lda', Pipeline([
+                        ('selector', ItemSelector(key='lda')),
+                        ('ngram', CountVectorizer(ngram_range=(1, 2))),
                     ]))
 
                 ]
@@ -38,12 +44,12 @@ class CategoryExtractor:
             ('clf', OneVsRestClassifier(LogisticRegression()))
         ])
         self.target_names = ['food', 'service', 'price', 'place']
-        train_data, self.train_target = self.read_train_data(filename)
+        train_data, self.train_target = self.read_data(train_filename)
         self.train_data = np.array(train_data)
+        
         self.model_filename = "../../data/category_extraction/category_extractor.model"
-        self.mlb = MultiLabelBinarizer()
 
-    def read_train_data(self, filename):
+    def read_data(self, filename):
         data = []
         targets = []
         regex = re.compile('[^0-9a-zA-Z]+')
@@ -60,12 +66,13 @@ class CategoryExtractor:
         return data, targets
 
     def train(self):
-        labels = self.mlb.fit_transform(self.train_target)
+        mlb = MultiLabelBinarizer()
+        labels = mlb.fit_transform(self.train_target)
 
         model = self.pipeline.fit(self.train_data, labels)
-        pickle.dump(model, open(self.model_filename, "wb"))
+        joblib.dump(self.pipeline.fit(self.train_data, labels), self.model_filename)
 
-    def evaluate(self):
+    def evaluate_cross_validation(self):
         mlb = MultiLabelBinarizer()
         labels = mlb.fit_transform(self.train_target)
         n = 10
@@ -97,18 +104,49 @@ class CategoryExtractor:
         print "Recall: ", np.array(recall_scores).mean()
         print "F1-score: ", np.array(f1_scores).mean()
 
+    def evaluate(self, test_filename):
+        # self.train()
+        model = joblib.load(self.model_filename)
+        test_data, test_target = self.read_data(test_filename)
+        test_data = np.array(test_data)
 
-    def predict(self, test_data):
-        model = pickle.load(open(self.model_filename, "rb"))
+        mlb = MultiLabelBinarizer()
+        labels = mlb.fit_transform(test_target)
 
         predicted = model.predict(test_data)
-        all_labels = self.mlb.inverse_transform(predicted)
+
+        print "Precision: ", precision_score(labels, predicted, average=None)
+        print "Recall: ", recall_score(labels, predicted, average=None)
+        print "F1-score: ", f1_score(labels, predicted, average=None)
+
+        all_labels = mlb.inverse_transform(predicted)
+
+        # with open("../../data/category_extraction/result_test_data_cumulative.csv", "wb") as f:
+        #     writer = csv.writer(f, delimiter=';', quotechar='"')
+        #     for item, labels in zip(test_data, all_labels):
+        #         data = [item]
+        #         for target_name in self.target_names:
+        #             if target_name not in labels:
+        #                 data.append("no")
+        #             else:
+        #                 data.append("yes")
+        #         writer.writerow(data)
+
+
+    def predict(self, test_data):
+        model = joblib.load(self.model_filename)
+        mlb = MultiLabelBinarizer()
+
+        predicted = model.predict(test_data)
+        all_labels = mlb.inverse_transform(predicted)
 
         for item, labels in zip(test_data, all_labels):
             print('{0} => {1}'.format(item, ', '.join(labels)))
 
 if __name__ == '__main__':
     category_extractor = CategoryExtractor("../../data/category_extraction/train_data.csv")
-
-    # category_extractor.evaluate()
+    # category_extractor.train()
+    # category_extractor.evaluate_cross_validation()
+    category_extractor.evaluate("../../data/category_extraction/test_data.csv")
+    category_extractor.evaluate("../../data/category_extraction/test_data_cumulative.csv")
     

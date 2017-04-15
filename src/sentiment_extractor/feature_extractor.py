@@ -10,10 +10,9 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
 		return self
 
 	def transform(self, sentences):
-		print len(sentences)
 		CONLL_table = CONLLTable("../../data/output2.conll", False)
 		features = np.recarray(shape=(len(sentences),),
-                               dtype=[('sentence', object), ('headword', object), ('char', object), ('word2vec', object), ('glove', object)], )
+                               dtype=[('sentence', object), ('headword', object), ('word2vec', object), ('glove', object)], )
 		word2vec_cluster = self.read_word_embedding_cluster("../../data/word_embedding/word2vec_cluster_100.txt")
 		glove_cluster = self.read_word_embedding_cluster("../../data/word_embedding/glove_cluster_100.txt")
 		for i, text in enumerate(sentences):

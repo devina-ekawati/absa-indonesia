@@ -8,13 +8,15 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
 
 	def transform(self, sentences):
 		features = np.recarray(shape=(len(sentences),),
-                               dtype=[('sentence', object), ('word2vec', object), ('glove', object)], )
+                               dtype=[('sentence', object), ('word2vec', object), ('glove', object), ('lda', object)], )
 		word2vec_cluster = self.read_word_embedding_cluster("../../data/word_embedding/word2vec_cluster_100.txt")
 		glove_cluster = self.read_word_embedding_cluster("../../data/word_embedding/glove_cluster_100.txt")
+		lda_cluster = self.read_word_embedding_cluster("../../data/word_embedding/lda_cluster_100.txt")
 		for i, text in enumerate(sentences):
 			features[i]['sentence'] = text
 			features[i]['word2vec'] = self.get_word_embedding(text, word2vec_cluster)
 			features[i]['glove'] = self.get_word_embedding(text, glove_cluster)
+			features[i]['lda'] = self.get_word_embedding(text, lda_cluster)
 		return features
 
 	def get_word_embedding(self, sentence, cluster_dict):
