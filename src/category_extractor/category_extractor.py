@@ -1,19 +1,23 @@
-from feature_extractor import FeatureExtractor
-from item_selector import ItemSelector
-from sklearn.pipeline import FeatureUnion, Pipeline
-from sklearn.multiclass import OneVsRestClassifier
+import csv
+import os
+import re
+import numpy as np
+from sklearn.externals import joblib
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import f1_score, precision_score, recall_score
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.pipeline import FeatureUnion, Pipeline
 from sklearn.preprocessing import MultiLabelBinarizer
-from sklearn.externals import joblib
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, classification_report, confusion_matrix
-import numpy as np
-import csv, re
+from category_feature_extractor import CategoryFeatureExtractor
+from item_selector import ItemSelector
 
 class CategoryExtractor:
-    def __init__(self, train_filename):
+    def __init__(self):
+        file_path = os.path.dirname(os.path.abspath(__file__))
+        project_path = os.path.abspath(os.path.join(file_path, os.path.pardir))
         self.pipeline = Pipeline([
-            ('data', FeatureExtractor()),
+            ('data', CategoryFeatureExtractor()),
 
             ('features', FeatureUnion(
                 transformer_list=[
@@ -33,10 +37,10 @@ class CategoryExtractor:
                         ('ngram', CountVectorizer(ngram_range=(1, 2))),
                     ])),
 
-                    ('bag_of_lda', Pipeline([
-                        ('selector', ItemSelector(key='lda')),
-                        ('ngram', CountVectorizer(ngram_range=(1, 2))),
-                    ]))
+                    # ('bag_of_lda', Pipeline([
+                    #     ('selector', ItemSelector(key='lda')),
+                    #     ('ngram', CountVectorizer(ngram_range=(1, 2))),
+                    # ]))
 
                 ]
             )),
@@ -44,10 +48,10 @@ class CategoryExtractor:
             ('clf', OneVsRestClassifier(LogisticRegression()))
         ])
         self.target_names = ['food', 'service', 'price', 'place']
-        train_data, self.train_target = self.read_data(train_filename)
+        train_data, self.train_target = self.read_data(os.path.join(project_path, "../data/category_extraction/train_data.csv"))
         self.train_data = np.array(train_data)
         
-        self.model_filename = "../../data/category_extraction/category_extractor.model"
+        self.model_filename = os.path.join(project_path, "../data/category_extraction/category_extractor.model")
 
     def read_data(self, filename):
         data = []
@@ -70,7 +74,7 @@ class CategoryExtractor:
         labels = mlb.fit_transform(self.train_target)
 
         model = self.pipeline.fit(self.train_data, labels)
-        joblib.dump(self.pipeline.fit(self.train_data, labels), self.model_filename)
+        joblib.dump(model, self.model_filename)
 
     def evaluate_cross_validation(self):
         mlb = MultiLabelBinarizer()
@@ -121,32 +125,44 @@ class CategoryExtractor:
 
         all_labels = mlb.inverse_transform(predicted)
 
-        # with open("../../data/category_extraction/result_test_data_cumulative.csv", "wb") as f:
-        #     writer = csv.writer(f, delimiter=';', quotechar='"')
-        #     for item, labels in zip(test_data, all_labels):
-        #         data = [item]
-        #         for target_name in self.target_names:
-        #             if target_name not in labels:
-        #                 data.append("no")
-        #             else:
-        #                 data.append("yes")
-        #         writer.writerow(data)
+        with open("../../data/category_extraction/result_test_data_cumulative.csv", "wb") as f:
+            writer = csv.writer(f, delimiter=';', quotechar='"')
+            writer.writerow(["sentence", "food", "service", "price", "place"])
+            for item, labels in zip(test_data, all_labels):
+                data = [item]
+                for target_name in self.target_names:
+                    if target_name not in labels:
+                        data.append("no")
+                    else:
+                        data.append("yes")
+                writer.writerow(data)
 
 
     def predict(self, test_data):
         model = joblib.load(self.model_filename)
+
+        test_data = np.array(test_data)
         mlb = MultiLabelBinarizer()
+        mlb.fit_transform(self.train_target)
 
         predicted = model.predict(test_data)
         all_labels = mlb.inverse_transform(predicted)
 
+        results = []
         for item, labels in zip(test_data, all_labels):
-            print('{0} => {1}'.format(item, ', '.join(labels)))
+            categories = []
+            for target_name in self.target_names:
+                if target_name in labels:
+                    categories.append(target_name)
+            results.append(categories)
+            # print('{0} => {1}'.format(item, ', '.join(labels)))
+
+        return results
 
 if __name__ == '__main__':
-    category_extractor = CategoryExtractor("../../data/category_extraction/train_data.csv")
-    # category_extractor.train()
+    category_extractor = CategoryExtractor()
+    category_extractor.train()
     # category_extractor.evaluate_cross_validation()
-    category_extractor.evaluate("../../data/category_extraction/test_data.csv")
+    # category_extractor.evaluate("../../data/category_extraction/test_data.csv")
     category_extractor.evaluate("../../data/category_extraction/test_data_cumulative.csv")
     
