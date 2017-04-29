@@ -47,21 +47,30 @@ class CategoryExtractor:
 
             ('clf', OneVsRestClassifier(LogisticRegression()))
         ])
+
+        self.model_filename = os.path.join(project_path, "../data/category_extraction/category_extractor.model")
+        stopword_filename = os.path.join(project_path, "preprocess/resource/stopword.txt")
+
+        with open(stopword_filename, "r") as f:
+            stopword = f.readlines()
+        self.stopword = [x.rstrip() for x in stopword]
+
         self.target_names = ['food', 'service', 'price', 'place']
         train_data, self.train_target = self.read_data(os.path.join(project_path, "../data/category_extraction/train_data.csv"))
         self.train_data = np.array(train_data)
-        
-        self.model_filename = os.path.join(project_path, "../data/category_extraction/category_extractor.model")
 
     def read_data(self, filename):
         data = []
         targets = []
         regex = re.compile('[^0-9a-zA-Z]+')
+
         with open (filename, "rb") as f:
             reader = csv.reader(f, delimiter=';', quotechar='"')
             next(reader)
             for row in reader:
-                data.append(regex.sub(' ', row[0]))
+                text = regex.sub(' ', row[0])
+                # text = " ".join(x for x in text.split() if x not in self.stopword)
+                data.append(text)
                 target = []
                 for i in range(1, len(self.target_names) + 1):
                     if (row[i] == "yes"):
@@ -83,9 +92,9 @@ class CategoryExtractor:
         X_folds = np.array_split(self.train_data, n)
         y_folds = np.array_split(labels, n)
 
-        precision_scores = []
-        recall_scores = []
-        f1_scores = []
+        precision_scores = [[], [], [], []]
+        recall_scores = [[], [], [], []]
+        f1_scores = [[], [], [], []]
 
         for k in range(n):
             X_train = list(X_folds)
@@ -99,14 +108,16 @@ class CategoryExtractor:
             predicted = self.pipeline.predict(X_test)
 
             # print classification_report(y_test, predicted, target_names=self.target_names)
+            for i in range(4):
+                precision_scores[i].append(precision_score(y_test, predicted, average=None)[i])
+                recall_scores[i].append(recall_score(y_test, predicted, average=None)[i])
+                f1_scores[i].append(f1_score(y_test, predicted, average=None)[i])
 
-            precision_scores.append(precision_score(y_test, predicted, average=None).mean())
-            recall_scores.append(recall_score(y_test, predicted, average=None).mean())
-            f1_scores.append(f1_score(y_test, predicted, average=None).mean())
-
-        print "Precision: ", np.array(precision_scores).mean()
-        print "Recall: ", np.array(recall_scores).mean()
-        print "F1-score: ", np.array(f1_scores).mean()
+        for i in range(4):
+            print "Category: ", self.target_names[i]
+            print "\tPrecision: ", np.array(precision_scores[i]).mean()
+            print "\tRecall: ", np.array(recall_scores[i]).mean()
+            print "\tF1-score: ", np.array(f1_scores[i]).mean()
 
     def evaluate(self, test_filename):
         # self.train()
@@ -119,9 +130,13 @@ class CategoryExtractor:
 
         predicted = model.predict(test_data)
 
-        print "Precision: ", precision_score(labels, predicted, average=None)
-        print "Recall: ", recall_score(labels, predicted, average=None)
-        print "F1-score: ", f1_score(labels, predicted, average=None)
+        print "Precision: ", np.array(precision_score(labels, predicted, average=None))
+        print "Recall: ", np.array(recall_score(labels, predicted, average=None))
+        print "F1-score: ", np.array(f1_score(labels, predicted, average=None))
+
+        # print "Precision: ", precision_score(labels, predicted, average=None)
+        # print "Recall: ", recall_score(labels, predicted, average=None)
+        # print "F1-score: ", f1_score(labels, predicted, average=None)
 
         all_labels = mlb.inverse_transform(predicted)
 
@@ -161,7 +176,7 @@ class CategoryExtractor:
 
 if __name__ == '__main__':
     category_extractor = CategoryExtractor()
-    category_extractor.train()
+    # category_extractor.train()
     # category_extractor.evaluate_cross_validation()
     # category_extractor.evaluate("../../data/category_extraction/test_data.csv")
     category_extractor.evaluate("../../data/category_extraction/test_data_cumulative.csv")

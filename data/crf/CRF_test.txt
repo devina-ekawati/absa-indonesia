@@ -77,8 +77,8 @@ terlihat VBI O
 
 menu NN ASPECT-B
 dan CC O
-kualitas NN ASPECT-I
-makanan NN ASPECT-B
+kualitas NN ASPECT-B
+makanan NN ASPECT-I
 tidak NEG O
 seistimewa NN OP_POS-B
 yang SC O

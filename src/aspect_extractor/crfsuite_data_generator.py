@@ -8,7 +8,7 @@ from collections import Counter
 separator = ' '
 
 # Field names of the input data.
-fields = 'w pos dict head word2vec y'
+fields = 'w pos dict head word2vec100 word2vec5000 y'
 # fields = 'w pos dict head word2vec'
 
 # templates = [(('w', 0),), (('dict', 0),), (('head', 0),)]
@@ -16,7 +16,7 @@ fields = 'w pos dict head word2vec y'
 
 templates = [
 	# (('dict', 0), ),
-	(('head', 0), ),
+	# (('head', 0), ),
     (('w', -2), ),
     (('w', -1), ),
     (('w',  0), ),
@@ -41,15 +41,15 @@ templates = [
     (('pos', -2), ('pos', -1), ('pos',  0)),
     (('pos', -1), ('pos',  0), ('pos',  1)),
     (('pos',  0), ('pos',  1), ('pos',  2)),
-    (('word2vec', -2), ),
-    (('word2vec', -1), ),
-    (('word2vec',  0), ),
-    (('word2vec',  1), ),
-    (('word2vec',  2), ),
-    (('word2vec', -2), ('word2vec',  -1)),
-    (('word2vec', -1), ('word2vec',  0)),
-    (('word2vec',  0), ('word2vec',  1)),
-    (('word2vec',  1), ('word2vec',  2))
+    (('word2vec5000', -2), ),
+    (('word2vec5000', -1), ),
+    (('word2vec5000',  0), ),
+    (('word2vec5000',  1), ),
+    (('word2vec5000',  2), ),
+    (('word2vec100', -2), ('word2vec100',  -1)),
+    (('word2vec100', -1), ('word2vec100',  0)),
+    (('word2vec100',  0), ('word2vec100',  1)),
+    (('word2vec100',  1), ('word2vec100',  2))
     ]
 
 unigram_filename = "../../data/crf/list_unigrams.txt"

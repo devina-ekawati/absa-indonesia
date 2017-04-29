@@ -10,12 +10,12 @@ class MyWord2Vec():
         project_path = os.path.abspath(os.path.join(file_path, os.path.pardir))
 
         self.model_name = os.path.join(project_path, "../data/word_embedding/word2vec.model.txt")
+        self.reviews_filename = os.path.join(project_path, '../data/reviews/preprocessed_reviews_sentence.txt')
+
         if os.path.exists(self.model_name):
             self.model = Word2Vec.load_word2vec_format(self.model_name, binary=False)
         else:
             self.train()
-
-        self.reviews_filename = os.path.join(project_path, '../data/reviews/preprocessed_reviews_sentence.txt')
 
     def train(self):
         sentences = word2vec.LineSentence(self.reviews_filename)

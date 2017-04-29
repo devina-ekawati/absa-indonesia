@@ -68,9 +68,9 @@ class Main():
                 tokens.append(splitted_tokens[j])
                 labels.append(label[j])
 
-        # with open("category_test_data_cumulative.txt", "w") as f:
-        #     for token in tokens:
-        #         f.write(" ".join(token) + "\n")
+        with open("category_test_data_cumulative.txt", "w") as f:
+            for token in tokens:
+                f.write(" ".join(token) + "\n")
 
         self.results[0] = tokens
         self.results[1] = labels
@@ -152,7 +152,7 @@ class Main():
         #     print i+1, self.results[2][i], self.results[3][i]
 
     def get_tuples(self):
-        tuples = []
+        tuples = {"food": [], "price": [], "place": [], "service": []}
         tuple_generator = TupleGenerator()
 
         for i in range(len(self.results[0])):
@@ -165,9 +165,27 @@ class Main():
             # print aspects, category_sentiment
 
             if len(aspects) > 0 and len(category_sentiment) > 0:
-                tuples.append(tuple_generator.generate_tuples(aspects, category_sentiment))
+                result = tuple_generator.generate_tuples(aspects, category_sentiment)
+
+                for key in result:
+                    tuples[key] += result[key]
 
         return tuples
+
+    def get_ratings(self, tuples):
+        ratings = {"food": 0, "price": 0, "place": 0, "service": 0}
+
+        for category in tuples:
+            pos = 0.0
+            neg = 0.0
+            for item in tuples[category]:
+                if item[1] == "positive":
+                    pos += 1
+                elif item[1] == "negative":
+                    neg += 1
+            ratings[category] = (pos * 4 / (pos + neg)) + 1
+
+        return ratings
 
 if __name__ == '__main__':
     m = Main()
@@ -185,5 +203,5 @@ if __name__ == '__main__':
     m.get_sentiments()
     # generate tuple aspek, kategori, sentimen
     tuples = m.get_tuples()
-    for item in tuples:
-        print item
+
+    print m.get_ratings(tuples)

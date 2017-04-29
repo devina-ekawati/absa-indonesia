@@ -16,9 +16,11 @@ class CRFDataGenerator:
 		self.list_pos_tag_trigrams = []
 		self.list_word2vec_unigram = map(str, range(1, 5001))
 		self.list_word2vec_bigram = []
-		self.word2vec_cluster = self.init_word_embedding_cluster("../../data/word_embedding/word2vec_cluster_5000.txt")
-		# self.CONLL_table = CONLLTable("../../data/output1.conll")
-		self.CONLL_table = CONLLTable("../../data/output1_test1.conll")
+		self.word2vec_cluster_5000 = self.init_word_embedding_cluster("../../data/word_embedding/word2vec_cluster_5000.txt")
+		self.word2vec_cluster_100 = self.init_word_embedding_cluster("../../data/word_embedding/word2vec_cluster_100.txt")
+		self.CONLL_table = CONLLTable("../../data/output1.conll")
+		# self.CONLL_table = CONLLTable("../../data/output1_test1.conll")
+		self.stopword = self.init_stopword_list()
 		self.aspect_dict = []
 		if (testing):
 			with open("../../data/crf/aspect_dict.txt", "r") as f:
@@ -43,6 +45,13 @@ class CRFDataGenerator:
 			for line in f:
 				result.append(line.rstrip())
 		return result
+
+	def init_stopword_list(self):
+		stopword = []
+		with open("../preprocess/resource/stopword.txt", "r") as f:
+			for line in f:
+				stopword.append(line.rstrip())
+		return stopword
 
 	def get_list_unigrams(self):
 		return self.list_unigrams
@@ -177,10 +186,15 @@ class CRFDataGenerator:
 					self.aspect_dict.append(aspect)
 
 		line += " " + self.CONLL_table.get_head_word_of_word(id_sentence, id_word)
-		if (word in self.word2vec_cluster):
-			line += " " + str(self.word2vec_cluster[word])
+		if (word in self.word2vec_cluster_100):
+			line += " " + str(self.word2vec_cluster_100[word])
 		else:
-			line += " 0"
+			line += " -1"
+
+		if (word in self.word2vec_cluster_5000):
+			line += " " + str(self.word2vec_cluster_5000[word])
+		else:
+			line += " -1"
 		
 		# window_text = self.get_window_text(5, self.CONLL_table.get_sentence(id_sentence).split(), id_word)
 		# line += self.get_n_grams_feature(1, window_text, self.list_unigrams)
@@ -210,6 +224,8 @@ class CRFDataGenerator:
 			for i in range(start1, end1):
 				for j in range(self.CONLL_table.get_sentence_size(i)):
 					# if (self.CONLL_table.get_pos_tag(self.CONLL_table.get_row(i, j+1)) != "PUNCT"):
+					# if (self.CONLL_table.get_word(self.CONLL_table.get_row(i, j+1)) not in self.stopword):
+					# 	f.write(self.get_feature(i, j+1))
 					f.write(self.get_feature(i, j+1))
 				f.write("\n")
 
@@ -217,6 +233,8 @@ class CRFDataGenerator:
 				for i in range(start2, end2):
 					for j in range(self.CONLL_table.get_sentence_size(i)):
 						# if (self.CONLL_table.get_pos_tag(self.CONLL_table.get_row(i, j+1)) != "PUNCT"):
+						# if (self.CONLL_table.get_word(self.CONLL_table.get_row(i, j+1)) not in self.stopword):
+						# 	f.write(self.get_feature(i, j+1))
 						f.write(self.get_feature(i, j+1))
 					f.write("\n")
 

@@ -13,11 +13,11 @@ class CategoryFeatureExtractor(BaseEstimator, TransformerMixin):
         features = np.recarray(shape=(len(sentences),),
                                dtype=[('sentence', object), ('word2vec', object), ('glove', object), ('lda', object)], )
         word2vec_cluster = self.read_word_embedding_cluster(
-            os.path.join(project_path, "../data/word_embedding/word2vec_cluster_100.txt"))
+            os.path.join(project_path, "../data/word_embedding/word2vec_cluster_5000.txt"))
         glove_cluster = self.read_word_embedding_cluster(
-            os.path.join(project_path, "../data/word_embedding/glove_cluster_100.txt"))
+            os.path.join(project_path, "../data/word_embedding/glove_cluster_5000.txt"))
         lda_cluster = self.read_word_embedding_cluster(
-            os.path.join(project_path, "../data/word_embedding/lda_cluster_100.txt"))
+            os.path.join(project_path, "../data/word_embedding/lda100_cluster_5000.txt"))
         for i, text in enumerate(sentences):
             features[i]['sentence'] = text
             features[i]['word2vec'] = self.get_word_embedding(text, word2vec_cluster)
