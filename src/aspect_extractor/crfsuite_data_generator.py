@@ -8,7 +8,7 @@ from collections import Counter
 separator = ' '
 
 # Field names of the input data.
-fields = 'w pos dict head word2vec100 word2vec5000 y'
+fields = 'w pos head word2vec100 word2vec5000 y'
 # fields = 'w pos dict head word2vec'
 
 # templates = [(('w', 0),), (('dict', 0),), (('head', 0),)]

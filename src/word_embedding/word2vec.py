@@ -1,5 +1,4 @@
-from subprocess import call
-from gensim.models import word2vec, Word2Vec
+from gensim.models import word2vec, Word2Vec, KeyedVectors
 
 import os
 
@@ -13,7 +12,8 @@ class MyWord2Vec():
         self.reviews_filename = os.path.join(project_path, '../data/reviews/preprocessed_reviews_sentence.txt')
 
         if os.path.exists(self.model_name):
-            self.model = Word2Vec.load_word2vec_format(self.model_name, binary=False)
+            # self.model = Word2Vec.load_word2vec_format(self.model_name, binary=False)
+            self.model = KeyedVectors.load_word2vec_format(self.model_name, binary=False)
         else:
             self.train()
 

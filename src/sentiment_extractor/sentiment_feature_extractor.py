@@ -12,14 +12,14 @@ class SentimentFeatureExtractor(BaseEstimator, TransformerMixin):
         file_path = os.path.dirname(os.path.abspath(__file__))
         project_path = os.path.abspath(os.path.join(file_path, os.path.pardir))
 
-        CONLL_table = CONLLTable(os.path.join(project_path, "../data/output2.conll"), False)
+        CONLL_table = CONLLTable(os.path.join(project_path, "../data/sentiment_extraction/train_data.conll"), False)
         features = np.recarray(shape=(len(sentences),),
                                dtype=[('sentence', object), ('headword', object), ('word2vec', object),
                                       ('glove', object)], )
         word2vec_cluster = self.read_word_embedding_cluster(os.path.join(project_path, "../data/word_embedding/word2vec_cluster_5000.txt"))
         glove_cluster = self.read_word_embedding_cluster(os.path.join(project_path, "../data/word_embedding/glove_cluster_500.txt"))
         for i, text in enumerate(sentences):
-            # features[i]['headword'] = CONLL_table.get_head_word_of_sentence(i)
+            features[i]['headword'] = CONLL_table.get_head_word_of_sentence(i)
             features[i]['sentence'] = text
             features[i]['word2vec'] = self.get_word_embedding(text, word2vec_cluster)
             features[i]['glove'] = self.get_word_embedding(text, glove_cluster)

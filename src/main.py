@@ -1,4 +1,4 @@
-import re
+import re, os
 from subprocess import call
 from conll_table import CONLLTable
 from tuple_generator import TupleGenerator
@@ -11,10 +11,23 @@ class Main():
         self.conjunctions = ["tetapi sayangnya", "namun", "tetapi", "walaupun", "akan tetapi", "sayangnya",
                              "hanya sayang", "sayang", "meski", "walau", "but"]
         self.results = [[], [], [], []]
+        self.env = {}
+        with open(".env", "r") as f:
+            for line in f:
+                line = line.rstrip()
+                tokens = line.split("=")
+                self.env[tokens[0]] = tokens[1]
 
-    def get_conll_table(self):
-        conll_table_filename = "../data/output1_test1.conll"
-        # eksekusi command buat conll_table
+    def preprocess(self, input_filename, output_filename):
+        call("jython preprocess/preprocess.py " + input_filename + " " + output_filename, shell=True)
+
+    def get_conll_table(self, input_filename, conll_table_filename):
+        prev_dir = os.getcwd()
+        os.chdir(os.path.expanduser("models/syntaxnet"))
+        command = "cat ../../" + input_filename + " | syntaxnet/models/parsey_universal/parse.sh $MODEL_DIRECTORY > ../../" \
+                  + conll_table_filename
+        call(command, env={"MODEL_DIRECTORY": self.env["MODEL_DIRECTORY"]},shell=True)
+        os.chdir(prev_dir)
         conll_table = CONLLTable(conll_table_filename, False)
         for sentence in conll_table.get_sentences():
             tokens = sentence.split()
@@ -24,9 +37,14 @@ class Main():
         indices = [0] + indices + [len(list_)]
         return [list_[v:indices[k + 1]] for k, v in enumerate(indices[:-1])]
 
-    def get_aspects(self):
-        # call("crfsuite tag -m data/crf/model.crf test.crfsuite.txt > result.txt")
-        with open("result.txt", "r") as f:
+    def get_aspects(self, conll_table_filename):
+        call("python aspect_extractor/crf_data_generator.py ../data/test/test.txt " + conll_table_filename + " false",
+             shell=True)
+        call("cat ../data/test/test.txt | python aspect_extractor/crfsuite_data_generator.py > "
+             "../data/test/test.crfsuite.txt", shell=True)
+        call("./aspect_extractor/crfsuite-0.12/bin/crfsuite tag -m ../data/crf/crf.model "
+             "../data/test/test.crfsuite.txt > ../data/test/crf_result.txt", shell=True)
+        with open("../data/test/crf_result.txt", "r") as f:
             label = []
             for line in f:
                 line = line.rstrip()
@@ -39,14 +57,15 @@ class Main():
     def get_aspects_from_tokens(self, tokens, labels):
         result = []
         indices = [i for i, x in enumerate(labels) if x == "ASPECT-B"]
-
         for i in indices:
             aspect = tokens[i]
             j = i + 1
-            if (j < len(tokens)):
-                while labels[j] == "ASPECT-I":
+            while j < len(tokens):
+                if labels[j] == "ASPECT-I":
                     aspect += " " + tokens[j]
                     j += 1
+                else:
+                    break
             result.append(aspect)
         return result
 
@@ -58,7 +77,6 @@ class Main():
 
     def split_sentences(self):
         tokens = []
-        sentences = []
         labels = []
         for i in range(len(self.results[0])):
             sentence = " ".join(self.results[0][i])
@@ -68,9 +86,9 @@ class Main():
                 tokens.append(splitted_tokens[j])
                 labels.append(label[j])
 
-        with open("category_test_data_cumulative.txt", "w") as f:
-            for token in tokens:
-                f.write(" ".join(token) + "\n")
+        # with open("category_test_data_cumulative.txt", "w") as f:
+        #     for token in tokens:
+        #         f.write(" ".join(token) + "\n")
 
         self.results[0] = tokens
         self.results[1] = labels
@@ -189,12 +207,15 @@ class Main():
 
 if __name__ == '__main__':
     m = Main()
+    input_filename = "../data/reviews/tizi_reviews.txt"
+    conll_filename = "../data/test/test.conll"
+    output_filename = "../data/test/preprocessed_reviews.txt"
     # preproses kalimat
-
+    m.preprocess(input_filename, output_filename)
     # jadiin conll table
-    m.get_conll_table()
+    m.get_conll_table(output_filename, conll_filename)
     # ekstraksi aspek
-    m.get_aspects()
+    m.get_aspects(conll_filename)
     # split setiap sentence
     m.split_sentences()
     # ekstraksi kategori

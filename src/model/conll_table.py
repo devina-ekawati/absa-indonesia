@@ -8,7 +8,7 @@ class CONLLTable:
     id_tree_tag = 3
     id_label = 4
 
-    def __init__(self, filename, label=True):
+    def __init__(self, filename, label=False):
         self.tables = []
         self.stopword = []
         self.read_CONLL_from_file(filename, label)

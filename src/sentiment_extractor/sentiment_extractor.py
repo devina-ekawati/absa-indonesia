@@ -287,8 +287,8 @@ class SentimentExtractor:
 
 if __name__ == '__main__':
     sentiment_extractor = SentimentExtractor()
-    sentiment_extractor.train()
-    sentiment_extractor.evaluate_cross_validation()
+    # sentiment_extractor.train()
+    # sentiment_extractor.evaluate_cross_validation()
 
     # sentiment_extractor.evaluate("../../data/sentiment_extraction/test_data.csv")
     # sentiment_extractor.evaluate_accumulative("../../data/sentiment_extraction/test_data.csv",
