@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <title>Restaurant Sentiment Analyzer</title>
+
+    <script type="text/javascript">
+        $(document).on('click', '.browse', function(){
+            var file = $(this).parent().parent().parent().find('.file');
+            file.trigger('click');
+        });
+        $(document).on('change', '.file', function(){
+            $(this).parent().find('.form-control').val($(this).val().replace(/C:\\fakepath\\/i, ''));
+
+        });
+    </script>
+    <style>
+        .file {
+          visibility: hidden;
+          position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header center-block">
+            <h1>Restaurant Sentiment Analyzer</h1>
+            <h4>Analyze restaurant's sentiments based on reviews</h4>
+        </div>
+
+        <form class="form-horizontal" method="POST" enctype=multipart/form-data>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">Restaurant Reviews Filename</label>
+                <input type="file" name="file" class="file">
+                <div class="input-group col-sm-offset-4 col-sm-6">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-file"></i></span>
+                        <input type="text" class="form-control" disabled placeholder="Upload Restaurant Reviews">
+                        <span class="input-group-btn">
+                        <button class="browse btn btn-default" type="button"><i class="glyphicon glyphicon-search"></i> Browse</button>
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-9 col-sm-6">
+                    <button type="submit" class="btn btn-primary">Analyze</button>
+                </div>
+            </div>
+        </form>
+
+        {% if not search %}
+            <div class="container">
+                <p>Ratings per categories</p>
+                <p>Food: {{ ratings["food"] }}</p>
+                <p>Place: {{ ratings["place"] }}</p>
+                <p>Price: {{ ratings["price"] }}</p>
+                <p>Service: {{ ratings["service"] }}</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

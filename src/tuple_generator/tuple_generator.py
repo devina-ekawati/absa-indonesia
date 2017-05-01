@@ -1,7 +1,5 @@
 import operator, re
-
 from word2vec import MyWord2Vec
-
 
 class TupleGenerator():
     def __init__(self):
@@ -21,7 +19,8 @@ class TupleGenerator():
         self.service_seed_words = self.my_word2vec.get_seed_words(service)
 
     def generate_tuples(self, aspects, categories_sentiments):
-        tuples = {"food": [], "price": [], "place": [], "service": []}
+        tuples = {"food": {"positive": [], "negative": []}, "price": {"positive": [], "negative": []}
+            , "place": {"positive": [], "negative": []}, "service": {"positive": [], "negative": []}}
         regex = re.compile('[^0-9a-zA-Z]+')
         for aspect in aspects:
             if len(categories_sentiments) > 1:
@@ -43,7 +42,7 @@ class TupleGenerator():
             else:
                 category = categories_sentiments.keys()[0]
 
-            tuples[category].append((aspect, categories_sentiments[category]))
+            tuples[category][categories_sentiments[category]].append(aspect)
             # tuples.append((aspect, category, categories_sentiments[category]))
         return tuples
 

@@ -194,13 +194,8 @@ class Main():
         ratings = {"food": 0, "price": 0, "place": 0, "service": 0}
 
         for category in tuples:
-            pos = 0.0
-            neg = 0.0
-            for item in tuples[category]:
-                if item[1] == "positive":
-                    pos += 1
-                elif item[1] == "negative":
-                    neg += 1
+            pos = len(tuples[category]["positive"])
+            neg = len(tuples[category]["negative"])
             ratings[category] = (pos * 4 / (pos + neg)) + 1
 
         return ratings
