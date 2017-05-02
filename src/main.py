@@ -170,7 +170,10 @@ class Main():
         #     print i+1, self.results[2][i], self.results[3][i]
 
     def get_tuples(self):
-        tuples = {"food": [], "price": [], "place": [], "service": []}
+        tuples = {"food": {"positive": [], "neutral": [], "negative": []},
+                  "price": {"positive": [], "neutral": [], "negative": []},
+                  "place": {"positive": [], "neutral": [], "negative": []},
+                  "service": {"positive": [], "neutral": [], "negative": []}}
         tuple_generator = TupleGenerator()
 
         for i in range(len(self.results[0])):
@@ -186,17 +189,19 @@ class Main():
                 result = tuple_generator.generate_tuples(aspects, category_sentiment)
 
                 for key in result:
-                    tuples[key] += result[key]
+                    for sentiment in result[key]:
+                        tuples[key][sentiment] += result[key][sentiment]
 
         return tuples
 
     def get_ratings(self, tuples):
-        ratings = {"food": 0, "price": 0, "place": 0, "service": 0}
+        ratings = {"food": [], "price": [], "place": [], "service": []}
 
         for category in tuples:
             pos = len(tuples[category]["positive"])
             neg = len(tuples[category]["negative"])
-            ratings[category] = (pos * 4 / (pos + neg)) + 1
+            ratings[category].append((pos * 4 / (pos + neg)) + 1)
+            ratings[category].append(round((float(pos) * 4 / (pos + neg)) + 1, 2))
 
         return ratings
 

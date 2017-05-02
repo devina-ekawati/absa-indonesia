@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <title>Restaurant Sentiment Analyzer</title>
@@ -30,7 +31,7 @@
     <div class="container">
         <div class="page-header center-block">
             <h1>Restaurant Sentiment Analyzer</h1>
-            <h4>Analyze restaurant's sentiments based on reviews</h4>
+            <h4>Analyze restaurant's sentiment based on reviews</h4>
         </div>
 
         <form class="form-horizontal" method="POST" enctype=multipart/form-data>
@@ -39,28 +40,231 @@
                 <input type="file" name="file" class="file">
                 <div class="input-group col-sm-offset-4 col-sm-6">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-file"></i></span>
-                        <input type="text" class="form-control" disabled placeholder="Upload Restaurant Reviews">
-                        <span class="input-group-btn">
-                        <button class="browse btn btn-default" type="button"><i class="glyphicon glyphicon-search"></i> Browse</button>
+                    <input type="text" class="form-control" disabled placeholder="Upload Restaurant Reviews">
+                    <span class="input-group-btn">
+                        <button class="browse btn btn-default" type="button"><i class="fa fa-search"></i> Browse</button>
+                        <button type="submit" class="btn btn-primary">Analyze</button>
                     </span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="col-sm-offset-9 col-sm-6">
-                    <button type="submit" class="btn btn-primary">Analyze</button>
                 </div>
             </div>
         </form>
 
         {% if not search %}
+        <div class="container">
+            <h3>Ratings per categories</h3>
+            <!--Food-->
             <div class="container">
-                <p>Ratings per categories</p>
-                <p>Food: {{ ratings["food"] }}</p>
-                <p>Place: {{ ratings["place"] }}</p>
-                <p>Price: {{ ratings["price"] }}</p>
-                <p>Service: {{ ratings["service"] }}</p>
+                <h4><i class="fa fa-cutlery"></i> Food</h4>
+                <h5 class="col-sm-3">
+                    {% for i in range(ratings["food"][0]) %}
+                    <i class="fa fa-star" style="color: #ffe500"></i>
+                    {% endfor %}
+                    {% for i in range(5-ratings["food"][0]) %}
+                    <i class="fa fa-star-o" style="color: lightgrey"></i>
+                    {% endfor %}
+                    Ratings: {{ ratings["food"][1] }}
+                </h5>
+                <button class="btn btn-info col-sm-1" type="button" data-toggle="collapse" data-target="#detail-food">Details</button>
             </div>
+            <div id="detail-food" class="collapse container">
+                <div class="container">
+                    <table class="table">
+                        <thead>
+                            <th>Sentiment</th>
+                            <th>Aspects</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Positive</td>
+                                <td>
+                                    {{ tuples["food"]["positive"][0] }}
+                                    {% for i in range(1, tuples["food"]["positive"]|length) %}
+                                    , {{ tuples["food"]["positive"][i] }}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Negative</td>
+                                <td>
+                                    {{ tuples["food"]["negative"][0] }}
+                                    {% for i in range(1, tuples["food"]["negative"]|length) %}
+                                    , {{ tuples["food"]["negative"][i] }}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Neutral</td>
+                                <td>
+                                    {{ tuples["food"]["neutral"][0] }}
+                                    {% for i in range(1, tuples["food"]["neutral"]|length) %}
+                                    , {{ tuples["food"]["neutral"][i] }}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!--Place-->
+            <div class="container">
+                <h4><i class="fa fa-home"></i> Place</h4>
+                <h5 class="col-sm-3">
+                    {% for i in range(ratings["place"][0]) %}
+                    <i class="fa fa-star" style="color: #ffe500"></i>
+                    {% endfor %}
+                    {% for i in range(5-ratings["place"][0]) %}
+                    <i class="fa fa-star-o" style="color: lightgrey"></i>
+                    {% endfor %}
+                    Ratings: {{ ratings["place"][1] }}
+                </h5>
+                <button class="btn btn-info col-sm-1" type="button" data-toggle="collapse" data-target="#detail-place">Details</button>
+            </div>
+            <div id="detail-place" class="collapse container">
+                <div class="container">
+                    <table class="table">
+                        <thead>
+                            <th>Sentiment</th>
+                            <th>Aspects</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Positive</td>
+                                <td>
+                                    {{ tuples["place"]["positive"][0] }}
+                                    {% for i in range(1, tuples["place"]["positive"]|length) %}
+                                    , {{ tuples["place"]["positive"][i] }}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Negative</td>
+                                <td>
+                                    {{ tuples["place"]["negative"][0] }}
+                                    {% for i in range(1, tuples["place"]["negative"]|length) %}
+                                    , {{ tuples["place"]["negative"][i] }}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Neutral</td>
+                                <td>
+                                    {{ tuples["place"]["neutral"][0] }}
+                                    {% for i in range(1, tuples["place"]["neutral"]|length) %}
+                                    , {{ tuples["place"]["neutral"][i] }}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!--Price-->
+            <div class="container">
+                <h4><i class="fa fa-money"></i> Price</h4>
+                <h5 class="col-sm-3">
+                    {% for i in range(ratings["price"][0]) %}
+                    <i class="fa fa-star" style="color: #ffe500"></i>
+                    {% endfor %}
+                    {% for i in range(5-ratings["price"][0]) %}
+                    <i class="fa fa-star-o" style="color: lightgrey"></i>
+                    {% endfor %}
+                    Ratings: {{ ratings["price"][1] }}
+                </h5>
+                <button class="btn btn-info col-sm-1" type="button" data-toggle="collapse" data-target="#detail-price">Details</button>
+            </div>
+            <div id="detail-price" class="collapse container">
+                <div class="container">
+                    <table class="table">
+                        <thead>
+                            <th>Sentiment</th>
+                            <th>Aspects</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Positive</td>
+                                <td>
+                                    {{ tuples["price"]["positive"][0] }}
+                                    {% for i in range(1, tuples["price"]["positive"]|length) %}
+                                    , {{ tuples["price"]["positive"][i] }}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Negative</td>
+                                <td>
+                                    {{ tuples["price"]["negative"][0] }}
+                                    {% for i in range(1, tuples["price"]["negative"]|length) %}
+                                    , {{ tuples["price"]["negative"][i] }}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Neutral</td>
+                                <td>
+                                    {{ tuples["price"]["neutral"][0] }}
+                                    {% for i in range(1, tuples["price"]["neutral"]|length) %}
+                                    , {{ tuples["price"]["neutral"][i] }}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!--Service-->
+            <div class="container">
+                <h4><i class="fa fa-user"></i> Service</h4>
+                <h5 class="col-sm-3">
+                    {% for i in range(ratings["service"][0]) %}
+                    <i class="fa fa-star" style="color: #ffe500"></i>
+                    {% endfor %}
+                    {% for i in range(5-ratings["service"][0]) %}
+                    <i class="fa fa-star-o" style="color: lightgrey"></i>
+                    {% endfor %}
+                    Ratings: {{ ratings["service"][1] }}
+                </h5>
+                <button class="btn btn-info col-sm-1" type="button" data-toggle="collapse" data-target="#detail-service">Details</button>
+            </div>
+            <div id="detail-service" class="collapse container">
+                <div class="container">
+                    <table class="table">
+                        <thead>
+                            <th>Sentiment</th>
+                            <th>Aspects</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Positive</td>
+                                <td>
+                                    {{ tuples["service"]["positive"][0] }}
+                                    {% for i in range(1, tuples["service"]["positive"]|length) %}
+                                    , {{ tuples["service"]["positive"][i] }}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Negative</td>
+                                <td>
+                                    {{ tuples["service"]["negative"][0] }}
+                                    {% for i in range(1, tuples["service"]["negative"]|length) %}
+                                    , {{ tuples["service"]["negative"][i] }}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Neutral</td>
+                                <td>
+                                    {{ tuples["service"]["neutral"][0] }}
+                                    {% for i in range(1, tuples["service"]["neutral"]|length) %}
+                                    , {{ tuples["service"]["neutral"][i] }}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
         {% endif %}
     </div>
 </body>

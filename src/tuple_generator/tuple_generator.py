@@ -19,8 +19,8 @@ class TupleGenerator():
         self.service_seed_words = self.my_word2vec.get_seed_words(service)
 
     def generate_tuples(self, aspects, categories_sentiments):
-        tuples = {"food": {"positive": [], "negative": []}, "price": {"positive": [], "negative": []}
-            , "place": {"positive": [], "negative": []}, "service": {"positive": [], "negative": []}}
+        tuples = {"food": {"positive": [], "neutral": [], "negative": []}, "price": {"positive": [], "neutral": [], "negative": []}
+            , "place": {"positive": [], "neutral": [], "negative": []}, "service": {"positive": [], "neutral": [], "negative": []}}
         regex = re.compile('[^0-9a-zA-Z]+')
         for aspect in aspects:
             if len(categories_sentiments) > 1:
@@ -52,4 +52,4 @@ if __name__ == '__main__':
     categories_sentiments = {"food": "negative", "service": "negative", "food": "positive"}
     tg = TupleGenerator()
 
-    print tg.generate_tuples(aspects, categories_sentiments)
+    tuples = tg.generate_tuples(aspects, categories_sentiments)
