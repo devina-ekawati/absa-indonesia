@@ -174,6 +174,10 @@ class Main():
                   "price": {"positive": [], "neutral": [], "negative": []},
                   "place": {"positive": [], "neutral": [], "negative": []},
                   "service": {"positive": [], "neutral": [], "negative": []}}
+        tuples_unique = {"food": {"positive": [], "neutral": [], "negative": []},
+                         "price": {"positive": [], "neutral": [], "negative": []},
+                         "place": {"positive": [], "neutral": [], "negative": []},
+                         "service": {"positive": [], "neutral": [], "negative": []}}
         tuple_generator = TupleGenerator()
 
         for i in range(len(self.results[0])):
@@ -191,8 +195,11 @@ class Main():
                 for key in result:
                     for sentiment in result[key]:
                         tuples[key][sentiment] += result[key][sentiment]
+                        for item in result[key][sentiment]:
+                            if item not in tuples_unique[key][sentiment]:
+                                tuples_unique[key][sentiment].append(item)
 
-        return tuples
+        return tuples, tuples_unique
 
     def get_ratings(self, tuples):
         ratings = {"food": [], "price": [], "place": [], "service": []}
@@ -223,6 +230,6 @@ if __name__ == '__main__':
     # ekstraksi sentimen
     m.get_sentiments()
     # generate tuple aspek, kategori, sentimen
-    tuples = m.get_tuples()
+    tuples, tuples_unique = m.get_tuples()
 
     print m.get_ratings(tuples)

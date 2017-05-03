@@ -58,9 +58,9 @@ def analyze(input_filename):
     # ekstraksi sentimen
     m.get_sentiments()
     # generate tuple aspek, kategori, sentimen
-    tuples = m.get_tuples()
+    tuples, tuples_unique = m.get_tuples()
 
-    return tuples, m.get_ratings(tuples)
+    return tuples_unique, m.get_ratings(tuples)
 
 if __name__ == '__main__':
     app.run()
