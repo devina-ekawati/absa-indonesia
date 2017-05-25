@@ -92,15 +92,6 @@
                                     {% endfor %}
                                 </td>
                             </tr>
-                            <tr>
-                                <td>Neutral</td>
-                                <td>
-                                    {{ tuples["food"]["neutral"][0] }}
-                                    {% for i in range(1, tuples["food"]["neutral"]|length) %}
-                                    , {{ tuples["food"]["neutral"][i] }}
-                                    {% endfor %}
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -142,15 +133,6 @@
                                     {{ tuples["place"]["negative"][0] }}
                                     {% for i in range(1, tuples["place"]["negative"]|length) %}
                                     , {{ tuples["place"]["negative"][i] }}
-                                    {% endfor %}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Neutral</td>
-                                <td>
-                                    {{ tuples["place"]["neutral"][0] }}
-                                    {% for i in range(1, tuples["place"]["neutral"]|length) %}
-                                    , {{ tuples["place"]["neutral"][i] }}
                                     {% endfor %}
                                 </td>
                             </tr>
@@ -198,15 +180,6 @@
                                     {% endfor %}
                                 </td>
                             </tr>
-                            <tr>
-                                <td>Neutral</td>
-                                <td>
-                                    {{ tuples["price"]["neutral"][0] }}
-                                    {% for i in range(1, tuples["price"]["neutral"]|length) %}
-                                    , {{ tuples["price"]["neutral"][i] }}
-                                    {% endfor %}
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -248,15 +221,6 @@
                                     {{ tuples["service"]["negative"][0] }}
                                     {% for i in range(1, tuples["service"]["negative"]|length) %}
                                     , {{ tuples["service"]["negative"][i] }}
-                                    {% endfor %}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Neutral</td>
-                                <td>
-                                    {{ tuples["service"]["neutral"][0] }}
-                                    {% for i in range(1, tuples["service"]["neutral"]|length) %}
-                                    , {{ tuples["service"]["neutral"][i] }}
                                     {% endfor %}
                                 </td>
                             </tr>

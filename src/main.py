@@ -170,14 +170,14 @@ class Main():
         #     print i+1, self.results[2][i], self.results[3][i]
 
     def get_tuples(self):
-        tuples = {"food": {"positive": [], "neutral": [], "negative": []},
-                  "price": {"positive": [], "neutral": [], "negative": []},
-                  "place": {"positive": [], "neutral": [], "negative": []},
-                  "service": {"positive": [], "neutral": [], "negative": []}}
-        tuples_unique = {"food": {"positive": [], "neutral": [], "negative": []},
-                         "price": {"positive": [], "neutral": [], "negative": []},
-                         "place": {"positive": [], "neutral": [], "negative": []},
-                         "service": {"positive": [], "neutral": [], "negative": []}}
+        tuples = {"food": {"positive": [], "negative": []},
+                  "price": {"positive": [], "negative": []},
+                  "place": {"positive": [], "negative": []},
+                  "service": {"positive": [], "negative": []}}
+        tuples_unique = {"food": {"positive": [], "negative": []},
+                         "price": {"positive": [], "negative": []},
+                         "place": {"positive": [], "negative": []},
+                         "service": {"positive": [], "negative": []}}
         tuple_generator = TupleGenerator()
 
         for i in range(len(self.results[0])):
