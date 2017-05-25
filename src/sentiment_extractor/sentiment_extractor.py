@@ -24,12 +24,12 @@ class SentimentExtractor:
         self.stopword = [x.rstrip() for x in stopword]
 
         self.categories = ['food', 'service', 'price', 'place']
-        self.target_names = ['positive', 'negative', 'neutral']
-        # self.target_names = ['positive', 'negative']
+        # self.target_names = ['positive', 'negative', 'neutral']
+        self.target_names = ['positive', 'negative']
         self.train_data = []
         self.train_target = []
         self.train_data, train_target, all_data = self.read_data(
-            os.path.join(project_path, "../data/sentiment_extraction/train_data.csv"))
+            os.path.join(project_path, "../data/sentiment_extraction/train_data_3.csv"))
         for i in range(len(self.categories)):
             # self.train_data.append(np.array(train_data[i]))
             self.train_target.append(np.array(train_target[i]))
@@ -87,7 +87,7 @@ class SentimentExtractor:
                     #     ('selector', ItemSelector(key='headword')),
                     #     ('ngram', CountVectorizer(ngram_range=(1, 5))),
                     # ])),
-
+                    #
                     # ('bag_of_skipbigram_2', Pipeline([
                     #     ('selector', ItemSelector(key='sentence')),
                     #     ('ngram', CountVectorizer(analyzer=skipper_2, vocabulary=vocabulary_skipper_2)),
@@ -194,17 +194,21 @@ class SentimentExtractor:
             model = joblib.load(self.model_filenames[i])
             predicted = model.predict(test_data[i].values())
 
-            if i == 1:
-                for key, actual, predict in zip(test_data[i], test_target[i], predicted):
-                    if actual != predict:
-                        print key+1, " ", test_data[i][key]
-                        print "\tactual: ", actual
-                        print "\tpredict: ", predict
+            for key, actual, predict in zip(test_data[i], test_target[i], predicted):
+                if actual != predict:
+                    print key+1, " ", test_data[i][key]
+                    print "\tactual: ", actual
+                    print "\tpredict: ", predict
 
             print "CATEGORY: " + self.categories[i]
             print "\tPrecision: ", np.array(precision_score(test_target[i], predicted, average=None)).mean()
             print "\tRecall: ", np.array(recall_score(test_target[i], predicted, average=None)).mean()
             print "\tF1-score: ", np.array(f1_score(test_target[i], predicted, average=None)).mean()
+
+            # print "CATEGORY: " + self.categories[i]
+            # print "\tPrecision: ", np.array(precision_score(test_target[i], predicted, average=None))
+            # print "\tRecall: ", np.array(recall_score(test_target[i], predicted, average=None))
+            # print "\tF1-score: ", np.array(f1_score(test_target[i], predicted, average=None))
 
             # print classification_report(test_target[i], predicted)
             # print confusion_matrix(test_target[i], predicted)
@@ -224,6 +228,7 @@ class SentimentExtractor:
             class_f1 = []
             for j in range(len(self.target_names)):
                 correct = 0.0
+                incorrect = 0.0
                 size_class_prediction = 0
                 size_class_actual = 0
 
@@ -259,6 +264,7 @@ class SentimentExtractor:
                 class_recall.append(recall)
                 class_f1.append(f1)
 
+
             # print "\tPrecision: ", class_precision
             # print "\tRecall: ", class_recall
             # print "\tF1-score: ", class_f1
@@ -287,9 +293,9 @@ class SentimentExtractor:
 
 if __name__ == '__main__':
     sentiment_extractor = SentimentExtractor()
-    # sentiment_extractor.train()
+    sentiment_extractor.train()
     # sentiment_extractor.evaluate_cross_validation()
 
-    # sentiment_extractor.evaluate("../../data/sentiment_extraction/test_data.csv")
-    # sentiment_extractor.evaluate_accumulative("../../data/sentiment_extraction/test_data.csv",
+    sentiment_extractor.evaluate("../../data/sentiment_extraction/test_data_3.csv")
+    # sentiment_extractor.evaluate_accumulative("../../data/sentiment_extraction/test_data_3.csv",
     #                                           "../../data/sentiment_extraction/test_data_cumulative.csv")

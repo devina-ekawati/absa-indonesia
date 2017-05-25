@@ -130,6 +130,17 @@ class CategoryExtractor:
 
         predicted = model.predict(test_data)
 
+        for sentence, predict, actual in zip(test_data, predicted, labels):
+            for item1, item2 in zip(predict, actual):
+                same = True
+                if item1 != item2:
+                    same = False
+            if not same:
+                print sentence
+                print actual
+                print predict
+
+
         print "Precision: ", np.array(precision_score(labels, predicted, average=None))
         print "Recall: ", np.array(recall_score(labels, predicted, average=None))
         print "F1-score: ", np.array(f1_score(labels, predicted, average=None))
@@ -178,6 +189,6 @@ if __name__ == '__main__':
     category_extractor = CategoryExtractor()
     # category_extractor.train()
     # category_extractor.evaluate_cross_validation()
-    # category_extractor.evaluate("../../data/category_extraction/test_data.csv")
-    category_extractor.evaluate("../../data/category_extraction/test_data_cumulative.csv")
+    category_extractor.evaluate("../../data/category_extraction/test_data.csv")
+    # category_extractor.evaluate("../../data/category_extraction/test_data_cumulative.csv")
     
